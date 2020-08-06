@@ -12,9 +12,8 @@ forEach(arrBrand, console.log);
 
 function map(array, action) {
    const arrOut = [];
-   let item;
 
-   for (item of array) 
+   for (let item of array) 
       arrOut.push(action(item));
    
    return arrOut;
@@ -26,23 +25,21 @@ function CAPS(string) {
 
 console.log(map(arrBrand, CAPS));
 
-function find(array, action) {
+function filter(array, action) {
    const arrOut = [];
-   let item;
 
-   for (item of array)
+   for (let item of array)
       if (action(item))
          arrOut.push(item);
    
    return arrOut;
 }
 
-console.log(find(arrBrand, (string) => string.length === 6));
+console.log(filter(arrBrand, (string) => string.length === 6));
 
-function some(array, action) { 
-   let item;
+function some(array, action) {
 
-   for (item of array)
+   for (let item of array)
       if (action(item))
          return true;
    
@@ -57,10 +54,9 @@ let msgString = some(map(arrBrand, CAPS), (string) => string === someBrand)
 
 console.log(msgString);
 
-function every(array, action) { 
-   let item;
-
-   for (item of array)
+function every(array, action) {
+   
+   for (let item of array)
       if (!(action(item)))
          return false;
    
