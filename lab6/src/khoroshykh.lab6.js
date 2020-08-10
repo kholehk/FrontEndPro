@@ -11,19 +11,14 @@ const metric = {
 }
 
 function copy(target, source) { 
-   const result = {};
 
    if (typeof source !== "object" || typeof target !== "object") return undefined;
 
-   for (let key in target) { 
-      result[key] = target[key];
-   }
-
    for (let key in source) {
-      result[key] = source[key];
+      target[key] = source[key];
    }
 
-   return result;
+   return target;
 }
 
 console.log("Point:", point);
@@ -31,7 +26,7 @@ console.log("Point:", point);
 const startPoint = copy(point, { x: 10, y: -7 });
 console.log("Start:", startPoint);
 
-const vector = copy(startPoint, metric);
+const vector = copy(copy({}, startPoint), metric);
 console.log("Vector:", vector);
 
 const myDirect = copy(vector, {length:100, degree: 45, color: "ff0000"});
@@ -39,14 +34,10 @@ console.log("Direction", myDirect);
 
 function isEqual(objL, objR) {
 
+   if (Object.keys(objL).length !== Object.keys(objR).length) return false;
+
    for (let key in objL) { 
       if (!(key in objR) || objL[key] !== objR[key]) {
-         return false;
-      }
-   }
-
-   for (let key in objR) {
-      if (!(key in objL) || objL[key] !== objR[key]) {
          return false;
       }
    }
@@ -54,15 +45,14 @@ function isEqual(objL, objR) {
    return true;
 }
 
-console.log(startPoint, vector, isEqual(startPoint, vector));
+console.log(startPoint, myDirect, isEqual(startPoint, myDirect));
+console.log(myDirect, vector, isEqual(myDirect, vector));
 
 function getStrStat(string) {
    const result = {};
 
    for (let char of string) {
-//      result[char] = result[char] === undefined ? 1 : ++result[char];
-      result[char]++;
-      if (Number.isNaN(result[char])) result[char] = 1;
+      result[char] = result[char] === undefined ? 1 : ++result[char];
    }
 
    return result;
