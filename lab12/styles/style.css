@@ -3,16 +3,16 @@
 }
 
 .wrapper {
+   margin: auto;
    max-width: 1024px;
 }
 
-.counters_list {
+.counters {
    padding: 0;
    display: flex;
-   text-align: center;
 }
 
-.counters_list_item {
+.counters_item {
    display: flex;
    flex-direction: column;
    padding: 10px;
@@ -20,4 +20,8 @@
    list-style: none;
    min-height: 100px;
    border: 2px solid black;
+}
+
+.counters_value {
+   text-align: center;
 }
