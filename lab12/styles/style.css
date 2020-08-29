@@ -1,0 +1,23 @@
+* {
+   box-sizing: border-box;
+}
+
+.wrapper {
+   max-width: 1024px;
+}
+
+.counters_list {
+   padding: 0;
+   display: flex;
+   text-align: center;
+}
+
+.counters_list_item {
+   display: flex;
+   flex-direction: column;
+   padding: 10px;
+   flex: auto;
+   list-style: none;
+   min-height: 100px;
+   border: 2px solid black;
+}
