@@ -25,3 +25,16 @@
 .counters_value {
    text-align: center;
 }
+
+.menu {
+   display: flex;
+   padding: 0;
+}
+
+.menu_item {
+   display: flex;
+   flex: auto;
+   list-style: none;
+   padding: 15px;
+   border: 1px solid black;
+}
