@@ -8,7 +8,7 @@ if (mainWrapper !== null) {
    let button;
    
    for (let i = 0; i < countersAmount; i++) { 
-      countersArray.push(createListItem({ text: '0', classList: ['counters_item'] }));
+      countersArray.push(createListItem({ text: '0', className: 'counters_item' }));
    }
 
    listCounters.className = 'counters';
@@ -19,15 +19,23 @@ if (mainWrapper !== null) {
       listCounters.appendChild(elem);
 
       button = createButton({ text: '+' });
-      button.addEventListener("click", event =>
-         event.target.parentElement.firstChild.innerHTML++);
+      button.addEventListener("click", incCounter);
       elem.appendChild(button);
 
       button = createButton({ text: '-' });
-      button.addEventListener("click", event =>
-         event.target.parentElement.firstChild.innerHTML--);
+      button.addEventListener("click", decCounter);
       elem.appendChild(button);
    });
+}
+
+function incCounter(event) { 
+
+   return event.target.parentElement.firstChild.innerHTML++;
+}
+
+function decCounter(event) {
+
+   return event.target.parentElement.firstChild.innerHTML--;
 }
 
 function createButton(props) { 
@@ -43,7 +51,7 @@ function createListItem(props) {
    const text = props.text || "";
    const element = document.createElement("li");
 
-   element.classList = props.classList || [];
+   element.className = props.className || "";
    element.innerHTML = `<span class="counters_value">${text}</span>`;
 
    return element;
