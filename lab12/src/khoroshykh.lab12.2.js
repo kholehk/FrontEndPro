@@ -1,6 +1,7 @@
 "use strict";
+
 const BLUE = 'rgb(0, 0, 255)';
-const GREEN = 'rgb(0, 128, 0)';
+const GREEN = 'rgb(0, 255, 0)';
 const YELLOW = 'rgb(255, 255, 0)';
 const colors = [BLUE, GREEN, YELLOW];
 const countersItem = document.querySelectorAll(".counters_item");
