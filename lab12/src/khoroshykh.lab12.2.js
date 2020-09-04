@@ -1,27 +1,24 @@
 "use strict";
 
-const BLUE = 'rgb(0, 0, 255)';
-const GREEN = 'rgb(0, 255, 0)';
-const YELLOW = 'rgb(255, 255, 0)';
+const BLUE = "rgb(0, 0, 255)";
+const GREEN = "rgb(0, 255, 0)";
+const YELLOW = "rgb(255, 255, 0)";
 const colors = [BLUE, GREEN, YELLOW];
-const countersItem = document.querySelectorAll(".counters_item");
+const colorsRect = document.querySelectorAll(".colors_rect");
 
-if (countersItem.length) { 
-
-   for (let elem of countersItem) {
-      elem.addEventListener("click", bgColorOnClick);
-      // console.log(elem);
-   }
+if (colorsRect.length) {
+  for (let elem of colorsRect) {
+    elem.addEventListener("click", changeBgColor);
+    // console.log(elem);
+  }
 }
 
-function bgColorOnClick(event) { 
+function changeBgColor(event) {
+  const bgColorRect = event.target.style.backgroundColor;
 
-   const elem = event.target.matches(".counters_item")
-      ? event.target
-      : event.target.parentNode;
+  let indexColor = colors.findIndex((color) => color === bgColorRect);
 
-   let indexColor = colors.findIndex(color => color === elem.style.backgroundColor);
+  indexColor = ++indexColor < colors.length ? indexColor : 0;
 
-   indexColor = ++indexColor >= colors.length ? indexColor = 0 : indexColor;
-   elem.style.backgroundColor = colors[indexColor];
+  event.target.style.backgroundColor = colors[indexColor];
 }

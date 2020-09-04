@@ -1,20 +1,19 @@
 "use strict";
 
-const RED = 'rgb(255, 0, 0)';
+const RED = "rgb(255, 0, 0)";
 
-const menu = document.querySelectorAll('.menu_item');
+const menu = document.querySelectorAll(".menu_item");
 
 for (let item of menu) {
-    item.addEventListener("click", clickMenu);
+  item.addEventListener("click", clickMenu);
 }
 
-console.log(menu);
+// console.log(menu);
 
 function clickMenu(event) {
+  for (let item of menu) {
+    item.style.backgroundColor = "";
+  }
 
-    for (let item of menu) {
-        item.style.backgroundColor = "";
-    }
-
-    event.target.style.backgroundColor = RED;
+  event.target.style.backgroundColor = RED;
 }
