@@ -1,5 +1,16 @@
 "use strict";
 
+const itemButtons = [
+   {
+      text: "Edit",
+      func: editUser
+   },
+   {
+      text: "Del",
+      func: delUser
+   }
+];
+
 const container = document.querySelector("main .container");
 
 if (container) { 
@@ -46,10 +57,11 @@ function addName(event) {
       .from(document.querySelectorAll("ol"))
       .find(elem => elem.dataset.list === "users");
    listUsers.appendChild(listUsersItem);
-   listUsersItem.addEventListener("click", changeItem);
+   listUsers.addEventListener("click", changeItem);
 
-   createButtonForItem({ text: "Edit", item: listUsersItem });
-   createButtonForItem({ text: "Del", item: listUsersItem });
+   itemButtons.forEach(elem =>
+      createButtonForItem({ text: elem.text, func: elem.func.name, item: listUsersItem })
+   );
 }
 
 function isInputName(elem) {
@@ -59,21 +71,21 @@ function isInputName(elem) {
 function createButtonForItem(props) {
    const button = document.createElement("button");
    button.innerText = props.text;
-   button.dataset.func = props.text.toLowerCase();
+   button.dataset.func = props.func;
    button.style.margin = "10px";
    props.item.appendChild(button);
 }
 
-function changeItem(event) { 
+function changeItem(event) {
    const ourItem = event.target.parentNode;
 
-   switch (event.target.dataset.func) { 
-      case "edit":
-         prompt("Edit name user:", ourItem.innerText);
-         break;
-      case "del":
-         confirm("Delete user?");
-         break;
-      default:
-   }
+   window[event.target.dataset.func]();
+}
+
+function editUser() {
+   prompt("Edit name:");
+}
+
+function delUser() {
+   confirm("is User delete?");
 }
