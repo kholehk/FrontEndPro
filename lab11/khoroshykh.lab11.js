@@ -3,11 +3,11 @@
 const itemButtons = [
    {
       text: "Edit",
-      func: editUser
+      func: editUser,
    },
    {
       text: "Del",
-      func: delUser
+      func: delUser,
    }
 ];
 
@@ -78,14 +78,15 @@ function createButtonForItem(props) {
 
 function changeItem(event) {
    const ourItem = event.target.parentNode;
-
-   window[event.target.dataset.func]();
+   const func = event.target.dataset.func;
+   if (!func) return;
+   window[func](ourItem);
 }
 
-function editUser() {
-   prompt("Edit name:");
+function editUser(user) {
+   prompt("Edit User name:", user.innerHTML);
 }
 
-function delUser() {
-   confirm("is User delete?");
+function delUser(user) {
+   confirm("Is User delete?");
 }
