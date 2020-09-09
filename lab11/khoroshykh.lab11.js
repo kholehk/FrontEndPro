@@ -16,7 +16,10 @@ const container = document.querySelector("main .container");
 const listUsers = document.querySelector("ol.users");
 
 if (container && listUsers) {
-   
+
+   for (let userItem of listUsers.children) { 
+      initUserItem({ text: userItem.innerText, item: userItem });
+   }
    listUsers.addEventListener("click", changeUser);
 
    const formAddUser = document.createElement("form");
@@ -52,17 +55,22 @@ function addUser(event) { //submit
 
    const userItem = document.createElement("li");
    listUsers.appendChild(userItem);
+   initUserItem({ text: inputName.value, item: userItem });
+   inputName.value = "";
+};
+
+function initUserItem(props) { 
+   props.item.innerText = "";
 
    const userName = document.createElement("p");
-   userName.innerText = inputName.value;
-   inputName.value = "";
+   userName.innerText = props.text;
    userName.dataset.info = DATANAME;
-   userItem.appendChild(userName);
+   props.item.appendChild(userName);
 
    userButtons.forEach(elem =>
-      createUserButton({ text: elem.text, func: elem.func.name, item: userItem })
+      createUserButton({ text: elem.text, func: elem.func.name, item: props.item })
    );
-}
+};
 
 function isInputName(elem) {
    return elem instanceof HTMLInputElement && elem.dataset.info === DATANAME;
@@ -85,8 +93,13 @@ function changeUser(event) {
 }
 
 function editUser(user) {
-   const userName = user.firstChild.innerText;
-   user.firstChild.innerText = prompt("Редагувати ім'я користувача:", userName) || userName;
+   const userName = Array
+      .from(user.children)
+      .find(elem => elem.dataset.info === DATANAME);
+
+   userName.innerText = prompt(
+      "Редагувати ім'я користувача:", userName.innerText
+   ) || userName.innerText;
 }
 
 function delUser(user) {
