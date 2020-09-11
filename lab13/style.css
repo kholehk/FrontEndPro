@@ -1,0 +1,15 @@
+* {
+   box-sizing: border-box;
+}
+
+.container {
+   margin: auto;
+   max-width: 1024px;
+}
+
+.login {
+   display: flex;
+   flex-direction: column;
+   max-width: 500px;
+   align-items: flex-end;
+}
