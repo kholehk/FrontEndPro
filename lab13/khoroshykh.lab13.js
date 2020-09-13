@@ -3,6 +3,7 @@
 const container = document.querySelector("main .container");
 
 if (container !== null) { 
+
    const formLogin = document.createElement("form");
    formLogin.classList.add("login");
    formLogin.name = "login";
@@ -24,6 +25,7 @@ if (container !== null) {
    const labelPassword = createLabel(
       { text: "Input password: ", parent: formLogin }
    );
+   labelPassword.classList.add("password");
 
    const inputPassword = createInput(
       {
@@ -33,13 +35,25 @@ if (container !== null) {
       }
    );
 
+   const buttonPassword = createButton(
+      {
+         type: "button",
+         text: "Show",
+         parent: labelPassword,
+      }
+   );
+   buttonPassword.classList.add("password_button");
+   buttonPassword.addEventListener("click", changeVisibilityPass);
+
    const buttonSubmit = createButton(
       {
          type: "submit",
          text: "Login",
+         disabled: true,
          parent: formLogin,
       }
    );
+   buttonSubmit.addEventListener("submit", loginSubmit);
 }
 
 function createLabel(props) { 
@@ -70,7 +84,17 @@ function createButton(props) {
    if (props.type)
       button.type = props.type;
    button.innerText = props.text || "";
+   button.disabled = props.disabled;
    props.parent.appendChild(button);
 
    return button;
+}
+
+function changeVisibilityPass(event) {
+   debugger;
+
+}
+
+function loginSubmit(event) {
+   debugger;
 }
