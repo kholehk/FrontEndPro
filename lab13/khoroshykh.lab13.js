@@ -17,10 +17,11 @@ if (container !== null) {
       {
          type: "text",
          placeholder: "Your Email",
-         info: "email", 
+         // info: "email", 
          parent: labelEmail,
       }
    );
+   inputEmail.addEventListener("change", isValidEmail);
 
    const labelPassword = createLabel(
       { text: "Input password: ", parent: formLogin }
@@ -30,7 +31,7 @@ if (container !== null) {
    const inputPassword = createInput(
       {
          type: "password",
-         info: "passw",
+         // info: "passw",
          parent: labelPassword,
       }
    );
@@ -90,9 +91,15 @@ function createButton(props) {
    return button;
 }
 
-function changeVisibilityPass(event) {
-   debugger;
+function isValidEmail(event) { 
+   const result = /\w\@\w/.test(event.target.value);
+   console.log(result);
+}
 
+function changeVisibilityPass(event) {
+   const inputPassword = event.target.previousSibling; 
+   inputPassword.type = inputPassword.type === "password" ? "text" : "password";
+   event.target.innerText = inputPassword.type === "password" ? "Show" : "Hide";
 }
 
 function loginSubmit(event) {
