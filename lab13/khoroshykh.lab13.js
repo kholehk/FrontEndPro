@@ -99,6 +99,7 @@ if (container !== null) {
       };
       inputEmail.value = "";
       inputPassword.value = "";
+      buttonSubmit.disabled = true;
 
       console.log(`Email: ${ login.email }\nPassword: ${ login.password }`);
    }
