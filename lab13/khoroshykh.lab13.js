@@ -4,10 +4,14 @@ const container = document.querySelector("main .container");
 
 if (container !== null) { 
 
+   let validEmail = false;
+   let validPassword = false;
+
    const formLogin = document.createElement("form");
    formLogin.classList.add("login");
    formLogin.name = "login";
    container.appendChild(formLogin);
+   formLogin.addEventListener("submit", submitLogin);
 
    const labelEmail = createLabel(
       { text: "Input Email: ", parent: formLogin }
@@ -17,11 +21,11 @@ if (container !== null) {
       {
          type: "text",
          placeholder: "Your Email",
-         // info: "email", 
+         info: "email", 
          parent: labelEmail,
       }
    );
-   inputEmail.addEventListener("change", isValidEmail);
+   inputEmail.addEventListener("change", changeEmail);
 
    const labelPassword = createLabel(
       { text: "Input password: ", parent: formLogin }
@@ -31,10 +35,11 @@ if (container !== null) {
    const inputPassword = createInput(
       {
          type: "password",
-         // info: "passw",
+         info: "passw",
          parent: labelPassword,
       }
    );
+   inputPassword.addEventListener("change", changePassword);
 
    const buttonPassword = createButton(
       {
@@ -54,7 +59,49 @@ if (container !== null) {
          parent: formLogin,
       }
    );
-   buttonSubmit.addEventListener("submit", loginSubmit);
+
+   function changeEmail(event) {
+      validEmail = true;
+      inputEmail.style.border = "";
+      if (event.target.value === "") {
+         validEmail = false;
+         inputEmail.style.border = "2px solid red";
+      }
+      changeButtonSubmit();
+   }
+
+   function changePassword(event) {
+      validPassword = true;
+      inputPassword.style.border = "";
+      if (event.target.value === "") {
+         validPassword = false;
+         inputPassword.style.border = "2px solid red";
+      }
+      changeButtonSubmit();
+   }
+
+   function changeButtonSubmit () { 
+      buttonSubmit.disabled = true;
+      if (validEmail && validPassword)
+         buttonSubmit.disabled = false;
+   }
+
+   function changeVisibilityPass(event) {
+      inputPassword.type = inputPassword.type === "password" ? "text" : "password";
+      event.target.innerText = inputPassword.type === "password" ? "Show" : "Hide";
+   }
+
+   function submitLogin(event) {
+      event.preventDefault();
+      const login = {
+         email: inputEmail.value,
+         password: inputPassword.value
+      };
+      inputEmail.value = "";
+      inputPassword.value = "";
+
+      console.log(`Email: ${ login.email }\nPassword: ${ login.password }`);
+   }
 }
 
 function createLabel(props) { 
@@ -69,8 +116,7 @@ function createLabel(props) {
 function createInput(props) { 
 
    const input = document.createElement("input");
-   if (props.type)
-      input.type = props.type;
+   input.type = props.type;
    if (props.placeholder)
       input.placeholder = props.placeholder;
    if (props.info)
@@ -82,26 +128,10 @@ function createInput(props) {
 
 function createButton(props) { 
    const button = document.createElement("button");
-   if (props.type)
-      button.type = props.type;
+   button.type = props.type;
    button.innerText = props.text || "";
    button.disabled = props.disabled;
    props.parent.appendChild(button);
 
    return button;
-}
-
-function isValidEmail(event) { 
-   const result = /\w\@\w/.test(event.target.value);
-   console.log(result);
-}
-
-function changeVisibilityPass(event) {
-   const inputPassword = event.target.previousSibling; 
-   inputPassword.type = inputPassword.type === "password" ? "text" : "password";
-   event.target.innerText = inputPassword.type === "password" ? "Show" : "Hide";
-}
-
-function loginSubmit(event) {
-   debugger;
 }
