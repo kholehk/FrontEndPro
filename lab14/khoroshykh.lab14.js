@@ -29,7 +29,7 @@ function Army(defaultUnits) {
 };
 
 Army.prototype.isReadyToMove = function(distance) { 
-   return this.units.every(elem => +distance <= elem.maxDistance);
+   return this.units.every(elem => elem.isReadyToMove(distance));
 };
 
 Army.prototype.isReadyToFight = function() { 
