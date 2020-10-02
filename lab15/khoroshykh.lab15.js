@@ -3,6 +3,9 @@
 const formatTime = "HH:mm:ss";
 const container = document.querySelector(".container");
 
+const clock = document.createElement("div");
+clock.classList.add("clock");
+container.appendChild(clock);
 renderClock(formatTime);
 
 const timerID = window.setInterval(() => {
@@ -10,13 +13,15 @@ const timerID = window.setInterval(() => {
 
   console.clear();
   console.log(time);
-  putTimeOnClock(time);
+  changeTimeOnClock(time);
 }, 1000);
 
 function getTime(date, format) {
   const hour = date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
+
   const min =
     date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
+
   const sec =
     date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
 
@@ -24,15 +29,20 @@ function getTime(date, format) {
 }
 
 function renderClock(format) {
-  const clock = document.createElement("div");
-  clock.classList.add("clock");
-  container.appendChild(clock);
-
   for (let char of format) {
-    let elementOfClock = document.createElement("div");
-    elementOfClock.innerText = char;
-    clock.appendChild(elementOfClock);
+    clock.appendChild(document.createElement("div"));
   }
 }
 
-function putTimeOnClock(time) {}
+function changeTimeOnClock(time) {
+  for (let i = 0; i < clock.childNodes.length; i++) {
+    clock.childNodes[i].innerText = time[i];
+    clock.childNodes[
+      i
+    ].style.color = `rgb(${randomColor()}, ${randomColor()}, ${randomColor()})`;
+  }
+}
+
+function randomColor() {
+  return Math.round((Math.random() * 1000) % 256);
+}
