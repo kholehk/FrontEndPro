@@ -1,39 +1,9 @@
 "use strict";
 
 const LIST_FORMATS = ["hh:mm:ss/24", "hh:mm:ss/12", "h:m:s/24", "h:m:s/12"];
+const amountClocksDiv = 10;
+let clockFormat = LIST_FORMATS[0];
 
-class Clock {
-   constructor() {
-      this.format = LIST_FORMATS[0];
-   }
-   
-   render(format) {
-      this.format = format;
-      clock.innerHTML = "";
-      
-      for (let i = 0; format[i] !== '/' && i < format.length; i++) {
-         clock.appendChild(document.createElement("div"));
-      }
-
-      if (+format.split("/")[1] === 12) { 
-         clock.appendChild(document.createElement("div"));
-      }
-   }
-   
-   getTime(date, format) {
-      const hour =
-         date.getHours() < 10 ? "0" + date.getHours() : date.getHours();
-
-      const min =
-         date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes();
-
-      const sec =
-         date.getSeconds() < 10 ? "0" + date.getSeconds() : date.getSeconds();
-
-      return format.replace(/HH(\D)mm(\D)ss/, `${hour}$1${min}$2${sec}`);
-   }
-}
-const myClock = new Clock();
 const container = document.querySelector(".container");
 
 const label = document.createElement("label");
@@ -45,27 +15,44 @@ LIST_FORMATS.forEach(element => {
    option.text = element;
    select.appendChild(option);
 });
-select.addEventListener("change", event => myClock.render(event.target.value));
+select.addEventListener("change", event => clockFormat = event.target.value);
 
 label.appendChild(select);
 container.appendChild(label);
 
 const clock = document.createElement("div");
 clock.classList.add("clock");
+for (let i = 0; i < amountClocksDiv; i++) { 
+   clock.appendChild(document.createElement("div"));
+}
 container.appendChild(clock);
-myClock.render(myClock.format);
 
 const timerID = window.setInterval(() => {
-   const time = myClock.getTime(new Date(), myClock.format);
+   const time = getTime(new Date(), clockFormat);
 
    // console.clear();
    // console.log(time);
    changeTimeOnClock(time);
 }, 1000);
 
+function getTime(date, format) {
+   const ampm = format.split("/")[1] === "12" ? 12 : 0;
+   let hour = date.getHours();
+   hour = hour > 12 ? hour - ampm : hour;
+   hour = hour < 10 && /hh/.test(format) ? "0" + hour : hour;
+
+   let min = date.getMinutes();
+   min = min < 10 && /mm/.test(format) ? "0" + min : min;
+
+   let sec = date.getSeconds();
+   sec = sec < 10 && /ss/.test(format) ? "0" + sec : sec;
+
+   return `${hour}:${min}:${sec}${ampm === 12 ? "am" : ""}`;
+}
+
 function changeTimeOnClock(time) {
    for (let i = 0; i < clock.childNodes.length; i++) {
-      clock.childNodes[i].innerText = time[i];
+      clock.childNodes[i].innerText = time[i] || "";
       clock.childNodes[i].style.color =
          `rgb(${randomColor()}, ${randomColor()}, ${randomColor()})`;
    }
