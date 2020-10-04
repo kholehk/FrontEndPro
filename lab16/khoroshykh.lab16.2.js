@@ -47,7 +47,7 @@ function getTime(date, format) {
    let sec = date.getSeconds();
    sec = sec < 10 && /ss/.test(format) ? "0" + sec : sec;
 
-   return `${hour}:${min}:${sec}${ampm === 12 ? "am" : ""}`;
+   return `${hour}:${min}:${sec}${ampm === 12 ? (date.getHours() > 12 ? "PM" : "AM") : ""}`;
 }
 
 function changeTimeOnClock(time) {
