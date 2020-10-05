@@ -1,6 +1,6 @@
 "use strict";
 
-const LIST_FORMATS = ["hh:mm:ss/24", "hh:mm:ss/12", "h:m:s/24", "h:m:s/12"];
+const LIST_FORMATS = ["hh:mm:ss/24", "hh:mm:ss/12", "h:m:s/24", "h:m:s/12", "mm:s", "ss", "hh:mm/12"];
 const amountClocksDiv = 10;
 let clockFormat = LIST_FORMATS[0];
 
@@ -28,26 +28,43 @@ for (let i = 0; i < amountClocksDiv; i++) {
 container.appendChild(clock);
 
 const timerID = window.setInterval(() => {
-   const time = getTime(new Date(), clockFormat);
+   const time = getTime(new Date());
 
    // console.clear();
    // console.log(time);
    changeTimeOnClock(time);
 }, 1000);
 
-function getTime(date, format) {
-   const ampm = format.split("/")[1] === "12" ? 12 : 0;
+function getTime(date) {
+   const ampm = clockFormat.split("/")[1] === "12" ? 12 : 0;
    let hour = date.getHours();
    hour = hour > 12 ? hour - ampm : hour;
-   hour = hour < 10 && /hh/.test(format) ? "0" + hour : hour;
+   hour = testFormat(/h/, hour);
+      // /h/.test(format)
+      // ? (hour < 10
+      //    ? (/hh/.test(format) ? "0" + hour : "_" + hour)
+      //    : hour)
+      // : "__";
 
    let min = date.getMinutes();
-   min = min < 10 && /mm/.test(format) ? "0" + min : min;
+   min = /m/.test(clockFormat)
+      ? (min < 10 && /mm/.test(clockFormat) ? "0" + min : min)
+      : "__";
 
    let sec = date.getSeconds();
-   sec = sec < 10 && /ss/.test(format) ? "0" + sec : sec;
+   sec = /s/.test(clockFormat)
+      ? (sec < 10 && /ss/.test(clockFormat) ? "0" + sec : sec)
+      : "__";
 
-   return `${hour}:${min}:${sec}${ampm === 12 ? (date.getHours() < 12 ? "AM" : "PM") : ""}`;
+   return `${hour}:${min}:${sec}${ampm ? (hour < "12" ? "AM" : "PM") : ""}`;
+}
+
+function testFormat(hmsExp, element) {
+   return hmsExp.test(clockFormat)
+      ? (element < 10
+         ? ((hmsExp + hmsExp).test(clockFormat) ? "0" + element: "_" + element)
+         : element)
+      : "__";;
 }
 
 function changeTimeOnClock(time) {
