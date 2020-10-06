@@ -2,9 +2,17 @@
 
 class List {
    constructor(list) {
-      this.element = document.createElement("ul");
+      this._element = document.createElement("ul");
       list.forEach(item => this.addItem(item));
-      this.element.addEventListener("click", event => console.log(event.target.dataset.button));
+      this._element.addEventListener("click", event => {
+         const clickEvent = event.target.dataset.func;
+         if (!clickEvent) return;
+         console.log(clickEvent);
+      });
+   }
+
+   get element() { 
+      return this._element;
    }
 
    addItem(text) {
@@ -14,7 +22,7 @@ class List {
       const buttonDel = document.createElement("button");
       buttonDel.innerText = "Del";
       buttonDel.style.marginLeft = "5px";
-      buttonDel.dataset.button = "delItem";
+      buttonDel.dataset.func = "delItem";
 
       this.element.appendChild(li);
       li.appendChild(buttonDel);
@@ -38,13 +46,12 @@ input.style.marginLeft = "5px";
 
 const buttonAdd = document.createElement("button");
 buttonAdd.innerText = "Add";
-buttonAdd.addEventListener("click", event =>
-   {
-      const item = event.target.previousSibling.value;
-      console.log(item);
-      list.addItem(item);
-   }
-);
+buttonAdd.addEventListener("click", event => {
+   const item = event.target.previousSibling.value;
+   event.target.previousSibling.value = "";
+   console.log(item);
+   if (item) list.addItem(item);
+});
 
 container.appendChild(label);
 label.appendChild(input);
