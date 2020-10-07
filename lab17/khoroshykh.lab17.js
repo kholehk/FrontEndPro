@@ -1,13 +1,49 @@
 "use strict";
 
-class List {
+class List { 
+   constructor(props) { 
+      if (!Array.isArray(props)) throw new Error("Constructor is wait props as Array");
+      props.forEach(elem => this.addItem(elem));
+   }
+
+   addItem(elem) { 
+      throw new Error("Method addItem is not implemented");
+   }
+}
+
+class ListLocalStorage extends List { 
+   constructor() {
+      super([]);
+   }
+
+   addItem(elem) {
+      let freeIndex = +localStorage.getItem("freeIndex") || 1;
+      localStorage.setItem(freeIndex, elem);
+      localStorage.setItem("freeIndex", ++freeIndex);
+   }
+
+   getItem(index) { 
+      return localStorage.getItem(index);
+   }
+
+   delItem(index) { 
+      localStorage.removeItem(index);
+   }
+}
+   
+const myList = new ListLocalStorage();
+myList.addItem("qwerty");
+console.log(JSON.stringify(localStorage));
+
+class ListHTML {
    constructor(list) {
       this._element = document.createElement("ul");
-      list.forEach(item => this.addItem(item));
+      list.forEach(text => this.addItem(text));
       this._element.addEventListener("click", event => {
-         const clickEvent = event.target.dataset.func;
-         if (!clickEvent) return;
-         console.log(clickEvent);
+         const clickEventFunc = event.target.dataset.func;
+         if (!clickEventFunc) return;
+         console.log(clickEventFunc);
+         this[clickEventFunc](event.target.parentElement);
       });
    }
 
@@ -17,7 +53,7 @@ class List {
 
    addItem(text) {
       const li = document.createElement("li");
-      li.innerText = text;
+      li.innerText = text || "";
 
       const buttonDel = document.createElement("button");
       buttonDel.innerText = "Del";
@@ -26,16 +62,19 @@ class List {
 
       this.element.appendChild(li);
       li.appendChild(buttonDel);
+
+      localStorage.setItem()
    }
 
    delItem(li) { 
-      this.element.delete(li);
+      console.log(li);
+      li.remove();
    }
 }
 
 const container = document.querySelector(".container");
 
-const list = new List([]);
+const list = new ListHTML([]);
 
 const label = document.createElement("label");
 label.innerText = "Input something: ";
@@ -47,10 +86,10 @@ input.style.marginLeft = "5px";
 const buttonAdd = document.createElement("button");
 buttonAdd.innerText = "Add";
 buttonAdd.addEventListener("click", event => {
-   const item = event.target.previousSibling.value;
+   const text = event.target.previousSibling.value;
+   if (!text) return;
+   list.addItem(text);
    event.target.previousSibling.value = "";
-   console.log(item);
-   if (item) list.addItem(item);
 });
 
 container.appendChild(label);
