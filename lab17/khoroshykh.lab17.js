@@ -12,7 +12,7 @@ class ListHTML{
       });
 
       this._update = new CustomEvent("update");
-      this._element.addEventListener("update", event => 
+      this._element.addEventListener("update", event =>
          localStorage.setItem(
             this._localStorageKey,
             JSON.stringify(
