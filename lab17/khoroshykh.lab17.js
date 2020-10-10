@@ -1,7 +1,9 @@
 "use strict";
 
 class ListHTML{
-   constructor() {
+   constructor(props) {
+      if (!props || !props.localStorageKey) return;
+      this._localStorageKey = props.localStorageKey;
       this._element = document.createElement("ul");      
       this._element.addEventListener("click", event => {
          const clickEventFunc = event.target.dataset.func;
@@ -9,22 +11,28 @@ class ListHTML{
          this[clickEventFunc](event.target.parentElement);
       });
 
-      const list = [];
-      let keys = Object.keys(localStorage);
-      for (let key of keys) {
-         if (Number.isNaN(key)) continue;
-         list[key] = localStorage.getItem(key);
+      this._update = new CustomEvent("update");
+      this._element.addEventListener("update", event => 
+         localStorage.setItem(
+            this._localStorageKey,
+            JSON.stringify(
+               Array.from(event.target.childNodes).map(elem => elem.querySelector("span").innerText)
+            )
+         )
+      );
+
+      let list = [];
+
+      try { 
+         list = JSON.parse(localStorage.getItem(this._localStorageKey));
+         if (!Array.isArray(list)) { 
+            list = [];
+         };
+      } catch (err){ 
+         console.error(err.name, err.message);
       }
 
-      localStorage.clear();
-      this._freeIndex = 0;
-
-      list.forEach(elem => {
-         if (elem !== null)
-         {
-            this.addItem(elem);
-         }
-      });
+      list.forEach(elem => this.addItem(elem));
    }
 
    get element() { 
@@ -34,9 +42,7 @@ class ListHTML{
    addItem(text) {
       const li = document.createElement("li");
       li.innerHTML = `<span>${text}</span>`;
-      li.dataset.index = this._freeIndex;
-      localStorage.setItem(this._freeIndex, text);
-      this._freeIndex++;
+      li.dataset.index = this._element.childNodes.length;
 
       const buttonDel = document.createElement("button");
       buttonDel.innerText = "Del";
@@ -45,18 +51,20 @@ class ListHTML{
 
       this.element.appendChild(li);
       li.appendChild(buttonDel);
+
+      this._element.dispatchEvent(this._update);
    }
 
-   delItem(li) { 
-      localStorage.removeItem(li.dataset.index);
+   delItem(li) {
       li.remove();
+      this._element.dispatchEvent(this._update);
    }
 }
 
 const container = document.querySelector(".container");
 if (container !== null) {
 
-   const list = new ListHTML([]);
+   const list = new ListHTML({ localStorageKey : "list_something"});
 
    const label = document.createElement("label");
    label.innerText = "Input something: ";
