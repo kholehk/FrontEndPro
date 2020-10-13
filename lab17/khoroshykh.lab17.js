@@ -9,17 +9,10 @@ class ListHTML{
          const clickEventFunc = event.target.dataset.func;
          if (!clickEventFunc) return;
          this[clickEventFunc](event.target.parentElement);
+         
+         setTimeout(() => this.update());
+         //this.update();
       });
-
-      this._update = new CustomEvent("update");
-      this._element.addEventListener("update", event =>
-         localStorage.setItem(
-            this._localStorageKey,
-            JSON.stringify(
-               Array.from(event.target.childNodes).map(elem => elem.querySelector("span").innerText)
-            )
-         )
-      );
 
       let list = [];
 
@@ -39,6 +32,17 @@ class ListHTML{
       return this._element;
    }
 
+   update() {
+      const list =
+         Array.from(this._element.childNodes)
+            .map(elem => elem.querySelector("span").innerText);
+      
+      localStorage.setItem(
+         this._localStorageKey,
+         JSON.stringify(list)
+      )
+   }
+
    addItem(text) {
       const li = document.createElement("li");
       li.innerHTML = `<span>${text}</span>`;
@@ -51,13 +55,10 @@ class ListHTML{
 
       this.element.appendChild(li);
       li.appendChild(buttonDel);
-
-      this._element.dispatchEvent(this._update);
    }
 
    delItem(li) {
       li.remove();
-      this._element.dispatchEvent(this._update);
    }
 }
 
@@ -84,6 +85,8 @@ if (container !== null) {
       if (!text) return;
       list.addItem(text);
       input.value = "";
+
+      setTimeout(() => list.update());
    });
 
    container.appendChild(form);
