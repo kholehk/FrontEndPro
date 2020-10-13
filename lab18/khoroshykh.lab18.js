@@ -4,39 +4,42 @@ class RequestList {
    constructor(props) { 
       if (!props || !props.url) return;
 
-      this.url = new URL(props.url);
-      this.url.searchParams.set("page", "1");
+      this._url = new URL(props.url);
 
-      this.xhr = new XMLHttpRequest();
-      this.xhr.timeout = 10000;
-      this.xhr.open("GET", this.url);
-      this.xhr.send();
+      this.xhr(1);
+      this.render();
+   }
 
-      this.xhr.onload = function () {
-         if (this.xhr.status !== 200) {
-            console.error(`${this.xhr.status}: ${this.xhr.statusText}`);
+   xhr(page) {
+      this._url.searchParams.set("page", page);
+
+      const xhr = new XMLHttpRequest();
+      xhr.timeout = 10000;
+      xhr.open("GET", this._url);
+      xhr.send();
+
+      xhr.onload = function () {
+         this._names = [];
+         if (xhr.status !== 200) {
+            console.error(`${xhr.status}: ${xhr.statusText}`);
          } else {
-            this.render();
+            try {
+               this._names = JSON.parse(xhr.response).results.map(elem => elem.name);
+            }
+            catch (err) {
+               console.error(err);
+            }
          }
       }.bind(this);
 
-      this.xhr.onerror = function () {
+      xhr.onerror = function () {
          console.error("Request is failed!");
-      }
-   }
-
-   get names() {
-      try {
-         return JSON.parse(this.xhr.response).results.map(elem => elem.name);
-      }
-      catch (err) {
-         console.error(err);
-         return [];
+         this._names = [];
       }
    }
 
    render() { 
-      console.log(this.names);
+      console.log(this._names);
    }
 }
 
