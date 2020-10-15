@@ -21,9 +21,19 @@ class RequestList {
 
       let nav = document.createElement("nav");
       container.appendChild(nav);
+      nav.addEventListener("click", (event) => { 
+         let func = event.target.dataset.func;
+         if (!func) return;
+
+         this._url = new URL(this._responseRequest.info[func]);
+         this.request();
+         this._page.innerText = this._url.searchParams.get("page");
+      });
 
       this._prev = document.createElement("button");
+      this._prev.type = "button";
       this._prev.innerText = "PREV";
+      this._prev.dataset.func = "prev";
       nav.appendChild(this._prev);
 
       this._page = document.createElement("span");
@@ -31,7 +41,9 @@ class RequestList {
       nav.appendChild(this._page);
 
       this._next = document.createElement("button");
+      this._next.type = "button";
       this._next.innerText = "NEXT";
+      this._next.dataset.func = "next";
       nav.appendChild(this._next);
    }
 
@@ -61,6 +73,7 @@ class RequestList {
    }
 
    render() { 
+      this._list.innerHTML = "";
       this._responseRequest.results
          .map(elem => elem.name)
          .forEach(name => {
@@ -68,6 +81,8 @@ class RequestList {
             li.innerText = name;
             this._list.appendChild(li);
          });
+      this._prev.disabled = !this._responseRequest.info.prev;
+      this._next.disabled = !this._responseRequest.info.next;
    }
 }
 
