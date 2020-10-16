@@ -16,7 +16,7 @@ class RequestList {
 
    init(container) { 
 
-      this._list = document.createElement("ul");
+      this._list = document.createElement("ol");
       container.appendChild(this._list);
 
       let nav = document.createElement("nav");
@@ -93,6 +93,7 @@ class RequestList {
             li.innerText = name;
             this._list.appendChild(li);
          });
+      this._list.firstChild.value = this._page.innerText * 20 - 19;
       this._prev.disabled = !this._responseRequest.info.prev;
       this._next.disabled = !this._responseRequest.info.next;
    }
