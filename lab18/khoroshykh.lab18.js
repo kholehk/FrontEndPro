@@ -30,21 +30,33 @@ class RequestList {
          this._page.innerText = this._url.searchParams.get("page");
       });
 
-      this._prev = document.createElement("button");
-      this._prev.type = "button";
-      this._prev.innerText = "PREV";
-      this._prev.dataset.func = "prev";
-      nav.appendChild(this._prev);
+      // this._prev = document.createElement("button");
+      // this._prev.type = "button";
+      // this._prev.innerText = "PREV";
+      // this._prev.dataset.func = "prev";
+      // nav.appendChild(this._prev);
+      nav.appendChild(this.createButton({ text:"<---", func:"prev" }));
 
       this._page = document.createElement("span");
       this._page.innerText = "1";
       nav.appendChild(this._page);
 
-      this._next = document.createElement("button");
-      this._next.type = "button";
-      this._next.innerText = "NEXT";
-      this._next.dataset.func = "next";
-      nav.appendChild(this._next);
+      nav.appendChild(this.createButton({ text: "--->", func: "next" }));
+      // this._next = document.createElement("button");
+      // this._next.type = "button";
+      // this._next.innerText = "NEXT";
+      // this._next.dataset.func = "next";
+      // nav.appendChild(this._next);
+   }
+
+   createButton(buttonDescript) { 
+
+      this[`_${buttonDescript.func}`] = document.createElement("button");
+      this[`_${buttonDescript.func}`].type = "button";
+      this[`_${buttonDescript.func}`].innerText = buttonDescript.text;
+      this[`_${buttonDescript.func}`].dataset.func = buttonDescript.func;
+      
+      return this[`_${buttonDescript.func}`];
    }
 
    request() {      
