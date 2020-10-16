@@ -86,6 +86,7 @@ new Clock();
 
 /*
 const LIST_FORMATS = ["HH:mm:ss", "HH:mm:ss/12", "mm:ss", "ss", "HH:ss/12"];
+
 let clockFormat = LIST_FORMATS[0];
 
 const container = document.querySelector(".container");
@@ -99,17 +100,21 @@ LIST_FORMATS.forEach(element => {
    option.text = element;
    select.appendChild(option);
 });
+
 select.addEventListener("change", event => {
    clockFormat = event.target.value;
    renderClock(getTime(new Date()));
 });
+
 
 label.appendChild(select);
 container.appendChild(label);
 
 const clock = document.createElement("div");
 clock.classList.add("clock");
+
 renderClock(getTime(new Date()));
+
 container.appendChild(clock);
 
 const timerID = window.setInterval(() => {
@@ -123,6 +128,7 @@ const timerID = window.setInterval(() => {
 function getTime(date) {
    const ampm = +clockFormat.split("/")[1] || 24;
    let hour = date.getHours();
+
    const tail = ampm - 12 ? "" : (hour < 12 ? "AM" : "PM");
    hour = hour >= ampm ? hour - ampm : hour;
    hour = hour < 10 ? "0" + hour : hour; 
@@ -133,6 +139,7 @@ function getTime(date) {
    min = /mm/.test(clockFormat) ? min : "__";
 
    let sec = date.getSeconds();
+
    sec = sec < 10 ? "0" + sec : sec;
    sec = /ss/.test(clockFormat) ? sec : "__";
 
@@ -140,7 +147,9 @@ function getTime(date) {
 }
 
 function changeTimeOnClock(time) {
+
    for (let i = 0; i < time.length; i++) {
+
       clock.childNodes[i].innerText = time[i] || "";
       clock.childNodes[i].style.color =
          `rgb(${randomColor()}, ${randomColor()}, ${randomColor()})`;

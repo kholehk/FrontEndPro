@@ -1,0 +1,17 @@
+* {
+   box-sizing: border-box;
+}
+
+body {
+   margin: 0;
+}
+
+.container {
+   margin: auto;
+   max-width: 1024px;
+}
+
+.add_something {
+   margin: 20px;
+   display: flex;
+}
