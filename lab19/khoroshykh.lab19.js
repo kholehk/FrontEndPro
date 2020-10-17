@@ -1,5 +1,22 @@
 "use strict";
 
+const buttonTypes = Object.freeze({
+   prev: "PREV PAGE",
+   next: "NEXT PAGE"
+});
+
+class Button { 
+   constructor(type) { 
+      const button = document.createElement("button");
+      button.type = "button";
+      button.innerText = buttonTypes[type];
+      button.dataset.func = type;
+
+      return button;
+   }
+}
+
+
 class RequestList { 
    constructor(props) { 
       if (!props || !props.url) return;
@@ -11,9 +28,7 @@ class RequestList {
       this.init(container);
 
       this._responseRequest = {};
-      this.request()
-         .then(resolve => this.render())
-         .catch(console.error("Request is failed!"));
+      this.request();
    }
 
    init(container) { 
@@ -32,45 +47,22 @@ class RequestList {
          this._page.innerText = this._url.searchParams.get("page");
       });
 
-      // this._prev = document.createElement("button");
-      // this._prev.type = "button";
-      // this._prev.innerText = "PREV";
-      // this._prev.dataset.func = "prev";
-      // nav.appendChild(this._prev);
-      nav.appendChild(this.createButton({ text:"<---", func:"prev" }));
+      this._prev = new Button("prev");
+      nav.appendChild(this._prev);
 
       this._page = document.createElement("span");
       this._page.innerText = "1";
       nav.appendChild(this._page);
 
-      nav.appendChild(this.createButton({ text: "--->", func: "next" }));
-      // this._next = document.createElement("button");
-      // this._next.type = "button";
-      // this._next.innerText = "NEXT";
-      // this._next.dataset.func = "next";
-      // nav.appendChild(this._next);
+      this._next = new Button("next");
+      nav.appendChild(this._next);
    }
-
-   createButton(buttonDescript) { 
-
-      this[`_${buttonDescript.func}`] = document.createElement("button");
-      this[`_${buttonDescript.func}`].type = "button";
-      this[`_${buttonDescript.func}`].innerText = buttonDescript.text;
-      this[`_${buttonDescript.func}`].dataset.func = buttonDescript.func;
-      
-      return this[`_${buttonDescript.func}`];
-   }
-
+   
    request() {
 
-      return fetch(this._url)
-         .then(response => {
-            if (response.status === 200) { 
-               this._responseRequest = response.json();
-            } else {
-               throw new Error(`Error loading data: ${response.status}`);
-            }
-         })
+      fetch(this._url)
+         .then(result => { if (result.status === 200) { return result.json(); } })
+         .then(result => { this._responseRequest = result; this.render() })
          .catch(err => console.error(err));
 
       // const xhr = new XMLHttpRequest();
@@ -112,7 +104,7 @@ class RequestList {
    }
 }
 
-const rickandmortyCharacter = new RequestList({
-   url: "https://rickandmortyapi.com/api/character/",
+const rickandmortyEpisode = new RequestList({
+   url: "https://rickandmortyapi.com/api/episode/",
    container: ".container",
 });
