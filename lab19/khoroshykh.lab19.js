@@ -11,7 +11,9 @@ class RequestList {
       this.init(container);
 
       this._responseRequest = {};
-      this.request();
+      this.request()
+         .then(resolve => this.render())
+         .catch(console.error("Request is failed!"));
    }
 
    init(container) { 
@@ -61,13 +63,13 @@ class RequestList {
 
    request() {
 
-      fetch(this._url)
-         .then(rsp => {
-            if (!rsp.ok) throw new Error(rsp.status);
-         })
-         .then(rsp => {
-            this._responseRequest = JSON.parse(rsp.json());
-            this.render();
+      return fetch(this._url)
+         .then(response => {
+            if (response.status === 200) { 
+               this._responseRequest = response.json();
+            } else {
+               throw new Error(`Error loading data: ${response.status}`);
+            }
          })
          .catch(err => console.error(err));
 
