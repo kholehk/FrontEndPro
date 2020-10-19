@@ -118,9 +118,10 @@ class RequestList {
             li.innerText = name;
             this._list.appendChild(li);
          });
-         
-      const { prev, next } = this._info;
+
       this._list.firstChild.value = (this.page - 1) * this._amounItems + 1;
+
+      const { prev, next } = this._info;
       this._prev.disabled = !prev;
       this._next.disabled = !next;
    }
