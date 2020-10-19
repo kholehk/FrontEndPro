@@ -7,12 +7,10 @@ const buttonTypes = Object.freeze({
 
 class Button { 
    constructor(type) { 
-      const button = document.createElement("button");
-      button.type = "button";
-      button.innerText = buttonTypes[type];
-      button.dataset.func = type;
-
-      return button;
+      this.button = document.createElement("button");
+      this.button.type = "button";
+      this.button.innerText = buttonTypes[type];
+      this.button.dataset.func = type;
    }
 }
 
@@ -27,7 +25,9 @@ class RequestList {
       container = container ? container : document.querySelector("body");
       this.init(container);
 
-      this._responseRequest = {};
+      this._amounItems = 0;
+      this._info = {};
+      this._results = [];
       this.request();
    }
 
@@ -48,21 +48,26 @@ class RequestList {
       });
 
       this._prev = new Button("prev");
-      nav.appendChild(this._prev);
+      nav.appendChild(this._prev.button);
 
       this._page = document.createElement("span");
       this._page.innerText = "1";
       nav.appendChild(this._page);
 
       this._next = new Button("next");
-      nav.appendChild(this._next);
+      nav.appendChild(this._next.button);
    }
    
    request() {
 
       fetch(this._url)
          .then(result => { if (result.status === 200) { return result.json(); } })
-         .then(result => { this._responseRequest = result; this.render() })
+         .then(response => {
+            this._info = response.info;
+            this._results = response.results;
+            this._amounItems = this._amounItems || response.results.length;
+            this.render();
+         })
          .catch(err => console.error(err));
 
       // const xhr = new XMLHttpRequest();
@@ -98,9 +103,11 @@ class RequestList {
             li.innerText = name;
             this._list.appendChild(li);
          });
-      this._list.firstChild.value = this._page.innerText * 20 - 19;
-      this._prev.disabled = !this._responseRequest.info.prev;
-      this._next.disabled = !this._responseRequest.info.next;
+         
+      const { prev, next } = this._responseRequest.info;
+      this._list.firstChild.value = (this._page.innerText - 1) * this._amounItems + 1;
+      this._prev.button.disabled = !prev;
+      this._next.button.disabled = !next;
    }
 }
 
