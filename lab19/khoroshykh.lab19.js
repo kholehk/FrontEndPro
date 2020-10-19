@@ -12,18 +12,25 @@ class Button {
       this.button.innerText = buttonTypes[type];
       this.button.dataset.func = type;
    }
+
+   set disabled(flag) { 
+      this.button.disabled = flag;
+   }
+
+   get disabled() { 
+      return this.button.disabled;
+   }
 }
 
 
 class RequestList { 
    constructor(props) { 
-      if (!props || !props.url) return;
+      if (!props || !props.url || !props.container) return;
       this._url = new URL(props.url);
       //this._url.searchParams.set("page", 1);
 
-      let container = document.querySelector(props.container);
-      container = container ? container : document.querySelector("body");
-      this.init(container);
+      this.init(props.container);
+      this.page = 1;
 
       this._amounItems = 0;
       this._info = {};
@@ -42,30 +49,38 @@ class RequestList {
          let func = event.target.dataset.func;
          if (!func) return;
 
-         this._url = new URL(this._responseRequest.info[func]);
+         this._url = new URL(this._info[func]);
          this.request();
-         this._page.innerText = this._url.searchParams.get("page");
+         this.page = this._url.searchParams.get("page");
       });
 
       this._prev = new Button("prev");
       nav.appendChild(this._prev.button);
 
       this._page = document.createElement("span");
-      this._page.innerText = "1";
+      this._page.style.margin = "15px";
       nav.appendChild(this._page);
 
       this._next = new Button("next");
       nav.appendChild(this._next.button);
    }
-   
+
+   set page(number) {
+      this._page.innerText = number;
+   }
+
+   get page() { 
+      return this._page.innerText;
+   }
+
    request() {
 
       fetch(this._url)
-         .then(result => { if (result.status === 200) { return result.json(); } })
-         .then(response => {
-            this._info = response.info;
-            this._results = response.results;
-            this._amounItems = this._amounItems || response.results.length;
+         .then(response => { if (response.status === 200) { return response.json(); } })
+         .then(({ info, results }) => {
+            this._info = info;
+            this._results = results;
+            this._amounItems = this._amounItems || results.length;
             this.render();
          })
          .catch(err => console.error(err));
@@ -96,7 +111,7 @@ class RequestList {
 
    render() { 
       this._list.innerHTML = "";
-      this._responseRequest.results
+      this._results
          .map(elem => elem.name)
          .forEach(name => {
             let li = document.createElement("li");
@@ -104,14 +119,32 @@ class RequestList {
             this._list.appendChild(li);
          });
          
-      const { prev, next } = this._responseRequest.info;
-      this._list.firstChild.value = (this._page.innerText - 1) * this._amounItems + 1;
-      this._prev.button.disabled = !prev;
-      this._next.button.disabled = !next;
+      const { prev, next } = this._info;
+      this._list.firstChild.value = (this.page - 1) * this._amounItems + 1;
+      this._prev.disabled = !prev;
+      this._next.disabled = !next;
    }
 }
 
-const rickandmortyEpisode = new RequestList({
-   url: "https://rickandmortyapi.com/api/episode/",
-   container: ".container",
-});
+
+const container = document.querySelector(".container");
+if (container) {
+
+   const episode = document.createElement("div");
+   episode.innerHTML = "<h1>Episode</h1>";
+   container.appendChild(episode);
+
+   const rickandmortyEpisode = new RequestList({
+      url: "https://rickandmortyapi.com/api/episode/",
+      container: episode,
+   });
+
+   const character = document.createElement("div");
+   character.innerHTML = "<h1>Character</h1>";
+   container.appendChild(character);
+
+   const rickandmortyCharacter = new RequestList({
+      url: "https://rickandmortyapi.com/api/character/",
+      container: character,
+   });
+}
