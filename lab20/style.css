@@ -10,3 +10,12 @@ body {
    max-width: 1024px;
    margin: auto;
 }
+
+.chat {
+   border: 1px solid black;
+   min-height: 80vh;
+}
+
+.post {
+   text-align: right;
+}
