@@ -13,9 +13,10 @@ body {
 
 .chat {
    border: 1px solid black;
-   min-height: 80vh;
+   min-height: 50vh;
+   padding: 0;
 }
 
 .post {
-   text-align: right;
+   text-decoration: none;
 }
