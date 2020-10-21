@@ -6,34 +6,48 @@ const buttonTypes = Object.freeze({
    send: "SEND",
 });
 
-class Button {
-   constructor(type) {
-      this._button = document.createElement("button");
-      [this._button.type, this._button.dataset.id] = type === "submit" ? ["submit", ""] : ["button", type];
-      this._button.innerText = buttonTypes[type];
+class Element { 
+   constructor(tag) { 
+      this._element = document.createElement(tag);;
    }
 
-   set disabled(flag) {
-      this._button.disabled = flag;
-   }
-
-   get disabled() {
-      return this._button.disabled;
-   }
-
-   render() { 
-      return this._button;
+   get element() { 
+      return this._element;
    }
 }
 
-class Input { 
-   constructor(text) { 
-      this._input = document.createElement("input");
-      this._input.placeholder = text;
+class Button extends Element {
+   constructor(type) {
+      super("button");
+
+      [this.element.type, this.element.dataset.id] = type === "submit" ? ["submit", ""] : ["button", type];
+      this.element.innerText = buttonTypes[type];
    }
 
-   render() { 
-      return this._input;
+   set disabled(flag) {
+      this.element.disabled = flag;
+   }
+
+   get disabled() {
+      return this.element.disabled;
+   }
+}
+
+class Input extends Element { 
+   constructor(text) {
+      super("input");
+      this.element.placeholder = text;
+   }
+}
+
+class Post extends Element { 
+   constructor(message) { 
+      super("li");
+      this.message = message;
+   }
+
+   set message(content) { 
+      this.element.innerHTML = content;
    }
 }
 
@@ -48,23 +62,32 @@ class Chat {
       this._formAddPost = document.createElement("form");
       this._formAddPost.addEventListener("submit", (event) => {
          event.preventDefault();
-         this.addPost(this.newPost);
+         this.addUserPost(this.inputPost);
+         this.clearInputPost();
       });
       container.appendChild(this._formAddPost);
 
-      this._newPost = new Input("input your message");
-      this._formAddPost.appendChild(this._newPost.render());
+      this._inputPost = new Input("input your message");
+      this._formAddPost.appendChild(this._inputPost.element);
 
       this._sendPost = new Button("submit");
-      this._formAddPost.appendChild(this._sendPost.render());
+      this._formAddPost.appendChild(this._sendPost.element);
    }
 
-   get newPost() { 
-      return this._newPost.render().value;
+   get inputPost() { 
+      return this._inputPost.element.value;
    }
 
-   addPost(post) { 
-      console.log(post);
+   clearInputPost() { 
+      this._inputPost.element.value = "";
+   }
+
+   addUserPost(message) {
+      if (!message) return;
+
+      const userPost = new Post(message);
+      this._listPosts.appendChild(userPost.element);
+      console.log(message);
    }
 }
 
