@@ -62,7 +62,7 @@ class Chat {
       this._formAddPost = document.createElement("form");
       this._formAddPost.addEventListener("submit", (event) => {
          event.preventDefault();
-         this.addUserPost(this.inputPost);
+         this.addPost(this.inputPost, "chat_user");
          this.clearInputPost();
       });
       container.appendChild(this._formAddPost);
@@ -82,15 +82,28 @@ class Chat {
       this._inputPost.element.value = "";
    }
 
-   addUserPost(message) {
+   addPost(message, whose) {
       if (!message) return;
 
-      const userPost = new Post(message);
-      this._listPosts.appendChild(userPost.element);
-      console.log(message);
+      const post = new Post(message);
+      post.element.classList.add(whose);
+      this._listPosts.appendChild(post.element);
    }
 }
 
+const BOT_POSTS = ["Hi, there!", "How are you?", "i'm fine :)", "Bye, bye", "Weather is ugly, today"];
 const container = document.querySelector(".container");
 
-new Chat(container);
+const myChat = new Chat(container);
+talkativeBot(myChat);
+
+async function talkativeBot(chat) { 
+   BOT_POSTS.forEach(async (msg) => {
+      await wait(10000);
+      await chat.addPost(msg, "chat_bot");
+   });
+}
+
+function wait(delay) {
+   return new Promise(resolve => setTimeout(resolve, delay));
+}
