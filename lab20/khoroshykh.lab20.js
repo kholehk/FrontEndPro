@@ -121,6 +121,7 @@ class Chat {
       const post = new Post(message);
       post.element.classList.add(whose);
       this._listPosts.appendChild(post.element);
+      this._listPosts.scrollTo(0, 1000);
    }
 
    static wait(delay) {

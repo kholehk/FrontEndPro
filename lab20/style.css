@@ -13,9 +13,10 @@ body {
 
 .chat {
    border: 1px solid black;
-   min-height: 50vh;
+   height: 50vh;
    padding: 0;
    list-style-type: none;
+   overflow: auto;
 }
 
 .chat_user {
