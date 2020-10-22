@@ -1,5 +1,9 @@
 "use strict";
 
+const typePost = Object.freeze({
+   user: "chat_user",
+   bot: "chat_bot",
+});
 
 const buttonTypes = Object.freeze({
    submit: "SEND",
@@ -51,19 +55,48 @@ class Post extends Element {
    }
 }
 
+class Bot { 
+   constructor() { 
+
+      this._hasAnswer = true;
+      this._startAnswer = ["Hi"];
+      this._stopAnswer = ["Bye"];
+      this._listAnswers = ["Hi", "How are you?", "Weather is fine, today", "Bye"];
+
+   }
+
+   async addPost(message) {
+      await Chat.wait(Chat.randomFromRange(1000, 3000));
+      this.addPost(message, typePost.bot);
+   }
+
+   static wait(delay) {
+      return new Promise(resolve => setTimeout(resolve, delay));
+   }
+
+   static randomFromRange(...arg) {
+      const [first, last] = arg.length === 1 ? [0, arg[0]] : arg;
+
+      const random = Math.round(Math.random() * last * 10) % last;
+      return random < first ? first : random;
+   }
+}
+
 class Chat { 
    constructor(container) {
       if (!container) return;
-
+  
       this._listPosts = document.createElement("ul");
       this._listPosts.classList.add("chat");
       container.appendChild(this._listPosts);
 
       this._formAddPost = document.createElement("form");
-      this._formAddPost.addEventListener("submit", (event) => {
+      this._formAddPost.addEventListener("submit", async (event) => {
          event.preventDefault();
-         this.addPost(this.inputPost, "chat_user");
+         this.addPost(this.inputPost, typePost.user);
          this.clearInputPost();
+         await Chat.wait(Chat.randomFromRange(1000, 3000));
+         this.addPost("Hi!", typePost.bot);
       });
       container.appendChild(this._formAddPost);
 
@@ -89,21 +122,19 @@ class Chat {
       post.element.classList.add(whose);
       this._listPosts.appendChild(post.element);
    }
+
+   static wait(delay) {
+      return new Promise(resolve => setTimeout(resolve, delay));
+   }
+
+   static randomFromRange(...arg) {
+      const [first, last] = arg.length === 1 ? [0, arg[0]] : arg;
+
+      const random = Math.round(Math.random() * last * 10) % last;
+      return random < first ? first : random;
+   }
 }
 
-const BOT_POSTS = ["Hi, there!", "How are you?", "i'm fine :)", "Bye, bye", "Weather is ugly, today"];
 const container = document.querySelector(".container");
 
 const myChat = new Chat(container);
-talkativeBot(myChat);
-
-async function talkativeBot(chat) { 
-   BOT_POSTS.forEach(async (msg) => {
-      await wait(10000);
-      await chat.addPost(msg, "chat_bot");
-   });
-}
-
-function wait(delay) {
-   return new Promise(resolve => setTimeout(resolve, delay));
-}
