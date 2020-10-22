@@ -55,37 +55,14 @@ class Post extends Element {
    }
 }
 
-class Bot { 
-   constructor() { 
-
-      this._hasAnswer = true;
-      this._startAnswer = ["Hi"];
-      this._stopAnswer = ["Bye"];
-      this._listAnswers = ["Hi", "How are you?", "Weather is fine, today", "Bye"];
-
-   }
-
-   async addPost(message) {
-      await Chat.wait(Chat.randomFromRange(1000, 3000));
-      this.addPost(message, typePost.bot);
-   }
-
-   static wait(delay) {
-      return new Promise(resolve => setTimeout(resolve, delay));
-   }
-
-   static randomFromRange(...arg) {
-      const [first, last] = arg.length === 1 ? [0, arg[0]] : arg;
-
-      const random = Math.round(Math.random() * last * 10) % last;
-      return random < first ? first : random;
-   }
-}
-
 class Chat { 
    constructor(container) {
       if (!container) return;
   
+      this._listAnswers = ["Hi", "How are you?", "I'm fine", "Weather is ugly, today", "Thats all, wolks", "Bye"];
+      this._stopPosts = ["Bye", "Good Bye", "Bye, bye"];
+      this._stopBot = false;
+
       this._listPosts = document.createElement("ul");
       this._listPosts.classList.add("chat");
       container.appendChild(this._listPosts);
@@ -93,10 +70,16 @@ class Chat {
       this._formAddPost = document.createElement("form");
       this._formAddPost.addEventListener("submit", async (event) => {
          event.preventDefault();
+
+         this._answerPost = this.inputPost === "Bye" ? 
+            "Bye" :
+            this._listAnswers[Chat.randomFromRange(0, this._listAnswers.length - 1)];
+
          this.addPost(this.inputPost, typePost.user);
          this.clearInputPost();
+
          await Chat.wait(Chat.randomFromRange(1000, 3000));
-         this.addPost("Hi!", typePost.bot);
+         this.answerBot();
       });
       container.appendChild(this._formAddPost);
 
@@ -122,6 +105,14 @@ class Chat {
       post.element.classList.add(whose);
       this._listPosts.appendChild(post.element);
       this._listPosts.scrollTo(0, 1000);
+   }
+
+   answerBot() { 
+      if (this._stopBot) return;
+
+      this._stopBot = this._stopPosts.some(elem => elem === this._answerPost);
+
+      this.addPost(this._answerPost, typePost.bot);
    }
 
    static wait(delay) {
