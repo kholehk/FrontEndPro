@@ -51,8 +51,15 @@ class Post extends Element {
       this.element.classList.add(style);
    }
 
-   set message(content) { 
+   set message(content) {
       this.element.innerHTML = content;
+   }
+}
+
+class Comment extends Element { 
+   constructor(text) { 
+      super("p");
+      this.element.innerHTML = `<i>${text}</i>`;
    }
 }
 
@@ -67,6 +74,10 @@ class List extends Element {
    constructor(style) { 
       super("ul");
       this.element.classList.add(style);
+   }
+
+   add(element) { 
+      this.element.appendChild(element);
    }
 }
 
@@ -130,54 +141,48 @@ class ChatError extends Error {
    }
 }
 
-class Chat {
+class Chat extends List {
    constructor(container) {
+      super("chat");
 
-      if (!container) return;
+      if (!container && !(container instanceof HTMLElement)) return;
 
-      this._listPosts = new List("chat");
-      container.appendChild(this._listPosts.element);
+      container.appendChild(this.element);
 
-      this._formAddPost = new Form((event) => this.submit(event));
-      container.appendChild(this._formAddPost.element);
+      const formAddPost = new Form((event) => this.submit(event));
+      container.appendChild(formAddPost.element);
 
-      this._inputPost = new Input("input your message");
-      this._formAddPost.element.appendChild(this._inputPost.element);
+      const inputPost = new Input("input your message");
+      formAddPost.element.appendChild(inputPost.element);
 
       this._sendPost = new Button("submit");
-      this._formAddPost.element.appendChild(this._sendPost.element);
-      const comment = document.createElement("p");
-      comment.innerHTML = "<i>* Please, say \"Bye\", for stop this Bot.</i>";
-      this._formAddPost.element.appendChild(comment);
+      formAddPost.element.appendChild(this._sendPost.element);
+      
+      const comment = new Comment("* Please, say \"Bye\", for stop this Bot.");
+      formAddPost.element.appendChild(comment.element);
 
       this._myBot = new Bot();
       this._listner = setInterval(() => this.listen(), 0);
-   }
-
-   get inputPost() {
-      return this._inputPost.element.value;
-   }
-
-   clearInputPost() {
-      this._inputPost.element.value = "";
    }
 
    addPost(message, style) {
       if (!message) return;
 
       const post = new Post(message, style);
-      this._listPosts.element.appendChild(post.element);
-      this._listPosts.element.scrollTo(0, this._listPosts.element.scrollHeight);
+      this.add(post.element);
+
+      this.element.scrollTo(0, this.element.scrollHeight);
    }
 
    submit(event) {
       event.preventDefault();
 
-      this.addPost(this.inputPost, typePost.user);
+      const msg = event.target.querySelector("input").value;
 
-      this._myBot.addPost(this.inputPost);
-
-      this.clearInputPost();
+      this.addPost(msg, typePost.user);
+      this._myBot.addPost(msg);
+      
+      event.target.querySelector("input").value = "";
    }
 
    async listen() {
