@@ -197,7 +197,7 @@ class Bot extends Chat {
       super(container, stopMessage);
       
       this._postsForAnswer = [];
-      this._listAnswers = ["Hi", "How are you?", "I'm fine", "Weather is ugly, today", "Bla-bla-bla-...", "Thats all, wolks", "Bye"];
+      this._listAnswers = ["Hi", "How are you?", "I'm fine", "Weather is ugly, today", "Bla-bla-bla-...", "Thats all, folks", "Bye"];
       this._stopMsg = stopMessage;
       this._stopBot = false;
 
@@ -232,24 +232,18 @@ class Bot extends Chat {
    }
    
    async listenChat() { 
-      return new Promise((result, reject) => {
+      if (this._stopBot) {
+         throw new ChatError(0, "Bot is stoped");
+      }
 
-         if (this._stopBot) {
+      if (!this._postsForAnswer.length) {
+         throw new ChatError(1, "Bot is wait");
+      }
 
-            reject(new ChatError(0, "Bot is stoped"));
+      this._stopBot = this._postsForAnswer[0] === this._stopMsg;
+      this._postsForAnswer = this._postsForAnswer.slice(1);
 
-         } else if (!this._postsForAnswer.length) {
-            
-            reject(new ChatError(1, "Bot is wait"));
-
-         } else {
-
-            this._stopBot = this._postsForAnswer[0] === this._stopMsg;
-            this._postsForAnswer = this._postsForAnswer.slice(1);
-
-            result(this.answerPost());
-         }
-      });
+      return this.answerPost();
    }
 
    static async wait(delay) {
