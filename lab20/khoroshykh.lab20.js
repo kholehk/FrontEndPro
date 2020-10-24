@@ -40,6 +40,7 @@ class Button extends Element {
 class Input extends Element { 
    constructor(text) {
       super("input");
+      this.element.type = "text";
       this.element.placeholder = text;
    }
 }
@@ -67,6 +68,13 @@ class Form extends Element {
    constructor(cb) { 
       super("form");
       this.element.addEventListener("submit", event => cb(event));
+
+      [
+         new Input("input your message"),
+         new Button("submit"),
+      ]
+         .forEach(obj => this.element.appendChild(obj.element));
+      
    }
 }
 
@@ -82,10 +90,10 @@ class List extends Element {
 }
 
 class Bot {
-   constructor() {
+   constructor(word) {
       this._postsForAnswer = [];
       this._listAnswers = ["Hi", "How are you?", "I'm fine", "Weather is ugly, today", "Bla-bla-bla-...", "Thats all, wolks", "Bye"];
-      this._stopPosts = ["Bye", "Good Bye", "Bye, bye"];
+      this._stopWord = word;
       this._stopBot = false;
    }
 
@@ -94,9 +102,9 @@ class Bot {
    }
 
    sendPost() { 
-      if (this._stopBot) return "Bye";
+      if (this._stopBot) return this._stopWord;
 
-      const idx = Bot.randomFromRange(0, this._listAnswers.length - 1);
+      const idx = Bot.randomFromRange(this._listAnswers.length - 1);
 
       return this._listAnswers[idx];
    }
@@ -114,7 +122,7 @@ class Bot {
 
          } else {
 
-            this._stopBot = this._postsForAnswer[0] === "Bye";
+            this._stopBot = this._postsForAnswer[0] === this._stopWord;
             this._postsForAnswer = this._postsForAnswer.slice(1);
 
             result(this.sendPost());
@@ -142,26 +150,23 @@ class ChatError extends Error {
 }
 
 class Chat extends List {
-   constructor(container) {
+   constructor(container, stopWord) {
       super("chat");
 
       if (!container && !(container instanceof HTMLElement)) return;
 
-      container.appendChild(this.element);
+      const form = new Form((event) => this.sendPost(event));
 
-      const formAddPost = new Form((event) => this.submit(event));
-      container.appendChild(formAddPost.element);
-
-      const inputPost = new Input("input your message");
-      formAddPost.element.appendChild(inputPost.element);
-
-      this._sendPost = new Button("submit");
-      formAddPost.element.appendChild(this._sendPost.element);
+      [
+         this,
+         form,
+         new Comment(`* Please, say "${stopWord}", for stop this Bot.`),
+      ]
+         .forEach(obj => container.appendChild(obj.element));
       
-      const comment = new Comment("* Please, say \"Bye\", for stop this Bot.");
-      formAddPost.element.appendChild(comment.element);
+      form.element.firstElementChild.focus();
 
-      this._myBot = new Bot();
+      this._myBot = new Bot(stopWord);
       this._listner = setInterval(() => this.listen(), 0);
    }
 
@@ -174,15 +179,16 @@ class Chat extends List {
       this.element.scrollTo(0, this.element.scrollHeight);
    }
 
-   submit(event) {
+   sendPost(event) {
       event.preventDefault();
 
-      const msg = event.target.querySelector("input").value;
+      const input = event.target.querySelector("input");
 
-      this.addPost(msg, typePost.user);
-      this._myBot.addPost(msg);
-      
-      event.target.querySelector("input").value = "";
+      this.addPost(input.value, typePost.user);
+      this._myBot.addPost(input.value);
+
+      input.value = "";
+      input.focus();
    }
 
    async listen() {
@@ -203,4 +209,4 @@ class Chat extends List {
 
 const container = document.querySelector(".container");
 
-const myChatBot = new Chat(container);
+const myChatBot = new Chat(container, "Bye");
