@@ -12,7 +12,7 @@ const buttonTypes = Object.freeze({
 
 class Element { 
    constructor(tag) { 
-      this._element = document.createElement(tag);;
+      this._element = document.createElement(tag);
    }
 
    get element() { 
@@ -90,25 +90,29 @@ class Bot {
       return this._listAnswers[idx];
    }
    
-   listenChat() { 
-      return new Promise((resolve, reject) => {
+   async listenChat() { 
+      return new Promise((result, reject) => {
+
          if (this._stopBot) {
-            this._postsForAnswer = [];
-            return reject(new Error("FINISHED"));
-         }
 
-         if (!this._postsForAnswer.length) {
-            return reject(new Error("WAIT"));
-         }
+            reject(new ChatError(0, "Bot is stoped"));
 
-         this._stopBot = this._postsForAnswer[0] === "Bye";
-         this._postsForAnswer = this._postsForAnswer.slice(1);
-         
-         return resolve(this.sendPost());
+         } else if (!this._postsForAnswer.length) {
+            
+            reject(new ChatError(1, "Bot is wait"));
+
+         } else {
+
+            this._stopBot = this._postsForAnswer[0] === "Bye";
+            this._postsForAnswer = this._postsForAnswer.slice(1);
+
+            result(this.sendPost());
+         }
       });
    }
-   static wait(delay) {
-      return new Promise(resolve => setTimeout(resolve, delay));
+
+   static async wait(delay) {
+      return new Promise(result => setTimeout(result, delay));
    }
 
    static randomFromRange(...arg) {
@@ -116,6 +120,13 @@ class Bot {
 
       const random = Math.round(Math.random() * last * 10) % last;
       return random < first ? first : random;
+   }
+}
+
+class ChatError extends Error { 
+   constructor(err, msg) { 
+      super(msg);
+      this._code = err;
    }
 }
 
@@ -135,12 +146,12 @@ class Chat {
 
       this._sendPost = new Button("submit");
       this._formAddPost.element.appendChild(this._sendPost.element);
+      const comment = document.createElement("p");
+      comment.innerHTML = "<i>* Please, say \"Bye\", for stop this Bot.</i>";
+      this._formAddPost.element.appendChild(comment);
 
       this._myBot = new Bot();
-      setInterval(
-         () => this.listen(),
-         Bot.randomFromRange(3000, 5000)
-      );
+      this._listner = setInterval(() => this.listen(), 0);
    }
 
    get inputPost() {
@@ -156,7 +167,7 @@ class Chat {
 
       const post = new Post(message, style);
       this._listPosts.element.appendChild(post.element);
-      this._listPosts.element.scrollTo(0, 100000); //correct later
+      this._listPosts.element.scrollTo(0, this._listPosts.element.scrollHeight);
    }
 
    submit(event) {
@@ -170,10 +181,17 @@ class Chat {
    }
 
    async listen() {
-      try {
+      try { 
          const msg = await this._myBot.listenChat();
+
+         await Bot.wait(Bot.randomFromRange(1000, 3000));
          this.addPost(msg, typePost.bot);
-      } catch {
+
+      } catch (err) { 
+         if (!err._code && this._listner) { 
+            clearInterval(this._listner);
+            this._listner = null;
+         }
       }
    }
 }

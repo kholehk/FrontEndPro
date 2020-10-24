@@ -14,7 +14,7 @@ body {
 .chat {
    border: 1px solid black;
    height: 50vh;
-   padding: 0;
+   padding: 10px;
    list-style-type: none;
    overflow: auto;
 }
