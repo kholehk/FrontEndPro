@@ -1,7 +1,8 @@
 "use strict";
 
-import { format } from 'date-fns'
+import Card from './card';
 
-const date = format(new Date(), 'IIII.mm.ss');
+const card = new Card({ title: "Robocop" });
 
-console.log("Hello, world!", date);
+const container = document.querySelector("body");
+card.render(container);
