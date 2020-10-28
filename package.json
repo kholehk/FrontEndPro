@@ -4,6 +4,7 @@
   "description": "ithillel.ua",
   "main": "index.js",
   "dependencies": {
+    "bootstrap": "^4.5.3",
     "date-fns": "^2.16.1",
     "faker": "^5.1.0",
     "lodash.template": "^4.5.0"
@@ -27,8 +28,7 @@
   },
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack",
-    "watch": "webpack --watch"
+    "build": "webpack"
   },
   "repository": {
     "type": "git",
