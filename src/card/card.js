@@ -2,14 +2,29 @@
 
 import { renderTemplate } from "./../template-utils";
 
-const tmpl = require("./card.html");
+const template = require("./card.html");
 
 export default class Card { 
-   constructor() {
-      [this._template, this._content] = [...arguments];
+   constructor(film) {
+      const { title = "", description = "", poster = ""} = film;
+
+      const data = {
+         title,
+         description,
+         imdb: "IMDB",
+         edit: "editCard",
+         close: "closeCard",
+      };
+
+      this._element = renderTemplate(template, data);
+      
+      if (poster !== "") {
+         this._element.querySelector("[data-id=poster]").src = poster;
+      }
    }
 
    render() {
-      return renderTemplate(tmpl, this._content);
+   
+      return this._element;
    };
 }

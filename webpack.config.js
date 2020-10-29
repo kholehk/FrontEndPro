@@ -47,7 +47,7 @@ module.exports = {
    },
    plugins: [
       new CleanWebpackPlugin(),
-      new HtmlWebpackPlugin(),
+      new HtmlWebpackPlugin({title: "КиноТека"}),
       new MiniCssExtractPlugin(),
       new webpack.HotModuleReplacementPlugin(),
    ],
