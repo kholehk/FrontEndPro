@@ -21,10 +21,29 @@ export default class Card {
       if (poster !== "") {
          this._element.querySelector("[data-id=poster]").src = poster;
       }
+
+      this._element
+         .addEventListener("click", (event) => {
+
+            console.clear();
+            event.path.forEach(element => {
+               if (element === event.currentTarget) return;
+               if (element.dataset.func) { this[element.dataset.func](); };
+            });
+         });
+      
    }
 
    render() {
    
       return this._element;
+   };
+
+   closeCard() { 
+      console.log("CLOSE CARD");
+   }
+
+   editCard() { 
+      console.log("EDIT CARD");
    };
 }
