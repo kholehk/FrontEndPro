@@ -6,6 +6,8 @@ const template = require("./card.html");
 
 export default class Card { 
    constructor(film) {
+      this._film = film;
+
       const { title = "", description = "", poster = ""} = film;
 
       const data = {
@@ -24,11 +26,12 @@ export default class Card {
 
       this._element
          .addEventListener("click", (event) => {
-
-            console.clear();
+            
             event.path.forEach(element => {
-               if (element === event.currentTarget) return;
-               if (element.dataset.func) { this[element.dataset.func](); };
+               // if (element === event.currentTarget) return;
+               if (element.dataset && element.dataset.func && typeof this[element.dataset.func] === "function") {
+                  this[element.dataset.func]();
+               };
             });
          });
       
@@ -40,10 +43,11 @@ export default class Card {
    };
 
    closeCard() { 
-      console.log("CLOSE CARD");
+      console.log("CLOSE CARD", this._film.title);
+      this._element.style.display = "none";
    }
 
    editCard() { 
-      console.log("EDIT CARD");
+      console.log("EDIT CARD", this._film.title);
    };
 }

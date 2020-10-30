@@ -9,9 +9,8 @@ const wrapper = document.createElement("div");
 wrapper.classList.add("wrapper");
 document.body.appendChild(wrapper);
 
-const cards = [
-   new Card(films[1]),
-   new Card(films[2]),
-];
+const cards = films
+   .filter(film => film.id)
+   .map(film => new Card(film));
 
 cards.forEach(card => wrapper.appendChild(card.render()));
