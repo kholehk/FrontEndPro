@@ -6,9 +6,8 @@ import './style.css';
 import { films } from './films';
 import Card from './card/card';
 
-const wrapper = document.createElement("div");
-wrapper.classList.add("wrapper");
-document.body.appendChild(wrapper);
+const wrapper = document.querySelector("#content");
+wrapper.innerHTML = "";
 
 const cards = films
    .filter(film => film.id)
