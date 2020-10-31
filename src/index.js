@@ -1,7 +1,8 @@
 "use strict";
 
-import './../node_modules/bootstrap/dist/css/bootstrap.min.css';
+//import './../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
+
 import { films } from './films';
 import Card from './card/card';
 

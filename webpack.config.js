@@ -41,13 +41,16 @@ module.exports = {
          },
          {
             test: /\.html$/i,
+            // use: ['file-loader?name=[name].[ext]', 'extract-loader', 'html-loader'],
             loader: 'html-loader',
          }
       ],
    },
    plugins: [
       new CleanWebpackPlugin(),
-      new HtmlWebpackPlugin({title: "КиноТека"}),
+      new HtmlWebpackPlugin({
+         template: './src/index.html',
+      }),
       new MiniCssExtractPlugin(),
       new webpack.HotModuleReplacementPlugin(),
    ],

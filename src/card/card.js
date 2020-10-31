@@ -8,33 +8,15 @@ export default class Card {
    constructor(film) {
       this._film = film;
 
-      const { title = "", description = "", poster = ""} = film;
-
-      const data = {
-         title,
-         description,
-         imdb: "IMDB",
-         edit: "editCard",
-         close: "closeCard",
-      };
-
-      this._element = renderTemplate(template, data);
+      this._element = renderTemplate(template, { ...film });
       
-      if (poster !== "") {
-         this._element.querySelector("[data-id=poster]").src = poster;
-      }
+      this._element.querySelector("[data-id=poster]").src = film.poster || "";
 
-      this._element
-         .addEventListener("click", (event) => {
-            
-            event.path.forEach(element => {
-               // if (element === event.currentTarget) return;
-               if (element.dataset && element.dataset.func && typeof this[element.dataset.func] === "function") {
-                  this[element.dataset.func]();
-               };
-            });
-         });
-      
+      const eventFunction = ["editCard", "deleteCard"];
+
+      this._element.querySelectorAll("button").forEach((btn, idx) => {
+         btn.addEventListener("click", event => this[eventFunction[idx]]());
+      });
    }
 
    render() {
@@ -42,12 +24,12 @@ export default class Card {
       return this._element;
    };
 
-   closeCard() { 
+   editCard() {
+      console.log("EDIT CARD", this._film.title);
+   };
+
+   deleteCard() { 
       console.log("CLOSE CARD", this._film.title);
       this._element.style.display = "none";
-   }
-
-   editCard() { 
-      console.log("EDIT CARD", this._film.title);
    };
 }
