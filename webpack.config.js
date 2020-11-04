@@ -3,10 +3,11 @@ const webpack = require('webpack');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 module.exports = {
    mode: 'development',
-   entry: './src/index.js',
+   entry: './src/index.ts',
    devtool: 'inline-source-map',
    output: {
       filename: 'main.[hash].js',
@@ -22,6 +23,15 @@ module.exports = {
    },
    module: {
       rules: [
+         {
+            test: /\.tsx?$/,
+            loader: 'ts-loader',
+            exclude: /node_modules/,
+            options: {
+               // disable type checker - we will use it in fork plugin
+               transpileOnly: true
+            }
+         },
          {
             test: /\.js$/,
             exclude: /node_modules/,
@@ -53,5 +63,6 @@ module.exports = {
       }),
       new MiniCssExtractPlugin(),
       new webpack.HotModuleReplacementPlugin(),
+      new ForkTsCheckerWebpackPlugin()
    ],
 }

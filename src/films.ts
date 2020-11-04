@@ -1,6 +1,17 @@
 "use strict";
 
-export const films = [
+import { v4 as uuid } from 'uuid';
+uuid(); // ⇨ '9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d'
+
+interface Film { 
+   id: string;
+   title: string;
+   description: string;
+   poster: string;
+   team: {};
+}
+
+export const films: Film[] = [
    {
       id: 0,
       title: "",
