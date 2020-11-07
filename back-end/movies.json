@@ -2,16 +2,19 @@
   {
     "id": "63007b20-40c2-4e97-acde-96b9aa8461c6",
     "title": "Breaking Bad",
-    "description": "Say my name"
+    "description": "Say my name",
+    "poster": "https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTYtZTA3ZWFkODRkNmE2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_UY268_CR5,0,182,268_AL_.jpg"
   },
   {
     "id": "cbc74e40-1f08-4ebf-891d-6ea48a657e19",
     "title": "The Boys",
-    "description": "Great movie!"
+    "description": "Great movie!",
+    "poster": "https://m.media-amazon.com/images/M/MV5BNGEyOGJiNWEtMTgwMi00ODU4LTlkMjItZWI4NjFmMzgxZGY2XkEyXkFqcGdeQXVyNjcyNjcyMzQ@._V1_UX182_CR0,0,182,268_AL_.jpg"
   },
   {
     "title": "New Pope",
     "description": "Jude Law",
-    "id": "5b8814b8-413f-48bb-8c52-f9d7f2b395f2"
+    "id": "5b8814b8-413f-48bb-8c52-f9d7f2b395f2",
+    "poster": "https://m.media-amazon.com/images/M/MV5BZGQzZDk2NTgtNTRjMS00MDI0LWIwZWQtNDZjODZhOGI1YzliXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_UX182_CR0,0,182,268_AL_.jpg"
   }
 ]

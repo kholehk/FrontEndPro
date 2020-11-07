@@ -2,22 +2,22 @@
 
 //import './../node_modules/bootstrap/dist/css/bootstrap.min.css';
 import './style.css';
-
-// import { films } from './films';
 import { getMovies } from './movies-utils';
-// import Card from './card/card';
+import Card from './card/card';
 
+async function main() {
 
-const wrapper = document.querySelector("#content");
-if (wrapper !== null) { 
+   const wrapper = document.querySelector("#content");
+   if (wrapper === null) return null;
 
-   // wrapper.innerHTML = "";
+   const movies = await getMovies('http://localhost:3000/movies/');
 
-   // const cards = films
-   //    .filter(film => film.id)
-   //    .map(film => new Card(film));
+   wrapper.innerHTML = "";
+   const cards = movies
+      .filter(mv => mv.id)
+      .map(mv => new Card(mv));
 
-   // cards.forEach(card => wrapper.appendChild(card.render()));
-
-   getMovies();
+   cards.forEach(card => wrapper.appendChild(card.render()));
 }
+
+main();

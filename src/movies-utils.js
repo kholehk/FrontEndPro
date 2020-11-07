@@ -2,13 +2,15 @@
 
 const axios = require('axios').default;
 
-async function getMovies() {
+async function getMovies(url) {
+
    try {
-      const response = await axios.get('http://localhost:3000/movies/');
-      console.log(response);
+      const response = await axios.get(url);
+      return response.data;
    } catch (error) {
-      console.error(error);
+      return [];
    }
+
 };
 
 export { getMovies };
