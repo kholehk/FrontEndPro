@@ -5,12 +5,12 @@ import { renderTemplate } from "./../template-utils";
 const template = require("./card.html");
 
 export default class Card { 
-   constructor(film) {
-      this._film = film;
+   constructor(movie) {
+      this._film = movie;
 
-      this._element = renderTemplate(template, { ...film });
+      this._element = renderTemplate(template, { ...movie });
       
-      this._element.querySelector("[data-id=poster]").src = film.poster || "";
+      this._element.querySelector("[data-id=poster]").src = movie.poster || "";
 
       const eventFunction = ["editCard", "deleteCard"];
 
