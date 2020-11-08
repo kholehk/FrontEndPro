@@ -1,14 +1,15 @@
 "use strict";
 
+import cardTemplate from "./card.html";
 import { renderTemplate } from "./../template-utils";
 
-const template = require("./card.html");
+// const template = require("./card.html");
 
 export default class Card { 
    constructor(movie) {
       this._film = movie;
 
-      this._element = renderTemplate(template, { ...movie });
+      this._element = renderTemplate(cardTemplate, { ...movie });
       
       this._element.querySelector("[data-id=poster]").src = movie.poster || "";
 
