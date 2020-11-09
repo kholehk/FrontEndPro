@@ -1,18 +1,25 @@
 "use strict";
 
 import './style.css';
-import { getMovies } from './movies-utils';
+
+import Welcome from './welcome/welcome';
 import Card from './card/card';
-import { getHistory } from "./app-history";
+
+import { getMovies } from './movies-utils';
+import { getHistory } from './app-history';
+
+const urlAPI = new URL("http://localhost:3000");
 
 async function renderRoute(path, wrapper) {
+   const urlPath = new URL(path, urlAPI);
+
    switch (path) {
       case "/":
-         wrapper.innerText = "HELLO";
+         wrapper.innerHTML = "";
+         wrapper.appendChild((new Welcome).render());
          break;
       case "/movies":
-
-         const movies = await getMovies('http://localhost:3000/movies/');
+         const movies = await getMovies(urlPath);
 
          wrapper.innerHTML = "";
          const cards = movies
@@ -33,18 +40,20 @@ async function main() {
    const wrapper = document.querySelector("#content");
    if (wrapper === null) return null;
 
+   wrapper.appendChild((new Welcome).render());
+
    const history = getHistory();
+   history.listen(listener => {
+      // console.log("LISTEN", listener);
+      renderRoute(listener.location.pathname, wrapper);
+   });
+
    const allMovies = document.querySelector("[href=\"#movies\"]");
-   allMovies.addEventListener("click", event => { 
+   allMovies.addEventListener("click", event => {
 
       event.preventDefault();
       history.push("/movies");
 
-   });   
-
-   history.listen(listener => {
-      console.log("LISTEN", listener);
-      renderRoute(listener.location.pathname, wrapper);
    });
 }
 

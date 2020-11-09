@@ -3,11 +3,9 @@
 import cardTemplate from "./card.html";
 import { renderTemplate } from "./../template-utils";
 
-// const template = require("./card.html");
-
 export default class Card { 
    constructor(movie) {
-      this._film = movie;
+      this._movie = movie;
 
       this._element = renderTemplate(cardTemplate, { ...movie });
       
@@ -26,11 +24,11 @@ export default class Card {
    };
 
    editCard() {
-      console.log("EDIT CARD", this._film.title);
+      console.log("EDIT CARD", this._movie.title);
    };
 
    deleteCard() { 
-      console.log("CLOSE CARD", this._film.title);
+      console.log("CLOSE CARD", this._movie.title);
       this._element.style.display = "none";
    };
 }
