@@ -1,7 +1,7 @@
 "use strict";
 
 import cardTemplate from "./card.html";
-import { renderTemplate } from "./../template-utils";
+import { renderTemplate } from "../utils/template-utils";
 
 export default class Card { 
    constructor(movie) {

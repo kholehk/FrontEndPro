@@ -1,9 +1,13 @@
 "use strict";
 
-const axios = require('axios').default;
+import axios from 'axios';
+// const axios = require('axios').default;
 
-async function getMovies(url) {
+const API = "http://localhost:3000";
 
+async function getMovies(path) {
+   const url = new URL(path, API);
+   
    try {
       const response = await axios.get(url);
       return response.data;

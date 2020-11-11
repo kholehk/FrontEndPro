@@ -1,7 +1,7 @@
 "use strict";
 
 import welcomeTemplate from "./welcome.html";
-import { renderTemplate } from "../template-utils";
+import { renderTemplate } from "../utils/template-utils";
 
 export default class Welcome { 
    constructor() {
