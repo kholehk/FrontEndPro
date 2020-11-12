@@ -3,10 +3,10 @@
 import axios from 'axios';
 // const axios = require('axios').default;
 
-const API = "http://localhost:3000";
+const urlAPI = "http://localhost:3000";
 
 async function getMovies(path) {
-   const url = new URL(path, API);
+   const url = new URL(path, urlAPI);
    
    try {
       const response = await axios.get(url);
@@ -15,7 +15,16 @@ async function getMovies(path) {
       console.error(error);
       return [];
    }
-
 };
 
-export { getMovies };
+async function deleteMovie(path) { 
+   const url = new URL(path, urlAPI);
+
+   try {
+      await axios.delete(url);
+   } catch (error) {
+      console.error(error);
+   }
+};
+
+export { getMovies, deleteMovie };

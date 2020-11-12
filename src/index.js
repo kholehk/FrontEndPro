@@ -2,7 +2,7 @@
 
 import './style.css';
 
-import Welcome from './welcome/welcome';
+import Root from './root/root';
 import Card from './card/card';
 
 import { getMovies } from './utils/api-utils';
@@ -11,43 +11,50 @@ import { getHistory } from './utils/app-history';
 function main() {
    
    const links = Object.freeze({
-      "home": "/",
+      "root": "/",
       "movies": "/movies",
    });
    
    async function renderRoute(path, wrapper) {
-
+      let render = [];
       wrapper.innerHTML = "";
 
       switch (path) {
-         case links.home:
-            wrapper.appendChild((new Welcome).render());
-            break;
+         case links.root:
 
+            render = [(new Root).render()];
+
+            break;
          case links.movies:
             const movies = await getMovies(path);
 
-            const cards = movies
+            render = movies
                .filter(mv => mv.id)
-               .map(mv => new Card(mv));
-
-            cards.forEach(card => wrapper.appendChild(card.render()));
+               .map(mv => (new Card(mv)).render());
+            
             break;
-
          default:
-            wrapper.innerHTML = "<h1>404</h1>";
-            break;
+            const err = document.createElement("h1");
+
+            err.innerText = "404";
+            render = [err];
       }
+
+      render.forEach( element => wrapper.appendChild(element) );
    }
 
    const wrapper = document.querySelector("#content");
    if (wrapper === null) return null;
 
-   const history = getHistory();
-   history.listen(listener => {
+   window.addEventListener("load", event => {
 
-      renderRoute(listener.location.pathname, wrapper);
+      const route = new URL(event.target.URL);
+      renderRoute(route.pathname, wrapper);
+
    });
+
+   const history = getHistory();
+   history.listen( listener => renderRoute(listener.location.pathname, wrapper) );
    
    const allMovies = document.querySelector(`[href="${links.movies}"]`);
    allMovies.addEventListener("click", event => {
@@ -57,14 +64,8 @@ function main() {
 
    });
 
-   window.addEventListener("load", event => { 
-
-      const route = new URL(event.target.URL);
-      renderRoute(route.pathname, wrapper);
-
-   });
-
-   renderRoute(links.home, wrapper);
+   wrapper.innerHTML = "";
+   wrapper.appendChild((new Root).render());
 }
 
 main();

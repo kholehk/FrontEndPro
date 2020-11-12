@@ -1,12 +1,12 @@
 "use strict";
 
-import welcomeTemplate from "./welcome.html";
+import rootTemplate from "./root.html";
 import { renderTemplate } from "../utils/template-utils";
 
-export default class Welcome { 
+export default class Root { 
    constructor() {
 
-      this._element = renderTemplate(welcomeTemplate);
+      this._element = renderTemplate(rootTemplate);
       
    }
 

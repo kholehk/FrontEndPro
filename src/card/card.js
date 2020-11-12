@@ -2,6 +2,7 @@
 
 import cardTemplate from "./card.html";
 import { renderTemplate } from "../utils/template-utils";
+import { deleteMovie } from "../utils/api-utils";
 
 export default class Card { 
    constructor(movie) {
@@ -24,11 +25,18 @@ export default class Card {
    };
 
    editCard() {
-      console.log("EDIT CARD", this._movie.title);
+      console.log("EDIT MOVIE", this._movie.title);
    };
 
-   deleteCard() { 
-      console.log("CLOSE CARD", this._movie.title);
-      this._element.style.display = "none";
+   async deleteCard() { 
+
+      if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._movie.title}"`)) { 
+
+         console.log("DELETE MOVIE", this._movie.title);
+         this._element.style.display = "none";
+
+         const path = `${location.pathname}/${this._movie.id}`;
+         await deleteMovie(path);
+      }
    };
 }
