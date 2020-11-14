@@ -30,10 +30,12 @@ export default class Card {
 
    async deleteCard() { 
 
-      if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._movie.title}"`)) { 
+      if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._movie.title}"?`)) { 
 
          console.log("DELETE MOVIE", this._movie.title);
-         this._element.style.display = "none";
+         // this._element.style.display = "none";
+         // this._element.innerText = "";
+         this._element.remove();
 
          const path = `${location.pathname}/${this._movie.id}`;
          await deleteMovie(path);
