@@ -4,12 +4,12 @@ import cardTemplate from "./card.html";
 import { renderTemplate } from "../utils/template-utils";
 import { deleteMovie } from "../utils/api-utils";
 
-export default class Card { 
+export default class Card {
    constructor(movie) {
       this._movie = movie;
 
       this._element = renderTemplate(cardTemplate, { ...movie });
-      
+       
       this._element.querySelector("[data-id=poster]").src = movie.poster || "";
 
       const eventFunction = ["editCard", "deleteCard"];

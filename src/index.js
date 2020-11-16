@@ -4,6 +4,7 @@ import './style.css';
 
 import Root from './root/root';
 import Card from './card/card';
+import Movie from './movie/movie';
 
 import { getMovies } from './utils/api-utils';
 import { getHistory } from './utils/app-history';
@@ -14,6 +15,12 @@ function main() {
       "root": "/",
       "movies": "/movies",
    });
+
+   function moreAboutMovie(event) { 
+      event.preventDefault();
+      const route = new URL(event.target.href);
+      history.push(`${links.movies}${route.pathname}`);
+   }
    
    async function renderRoute(path, wrapper) {
       let render = [];
@@ -30,14 +37,22 @@ function main() {
 
             render = movies
                .filter(mv => mv.id)
-               .map(mv => (new Card(mv)).render());
-            
+               .map(mv => {
+                  const card = new Card(mv);
+                  const moreLink = card.render().querySelector('[data-id="more"]');
+                  moreLink.href = `/${mv.id}`;
+                  moreLink.addEventListener("click", moreAboutMovie);
+                  return card.render();
+               });
+               
             break;
          default:
             const err = document.createElement("h1");
-
             err.innerText = "404";
-            render = [err];
+            
+            const id = path.split('/movies/') || [];
+
+            render = id.length = 2? [(new Movie(id[1])).render()] : [err];
       }
 
       render.forEach( element => wrapper.appendChild(element) );
