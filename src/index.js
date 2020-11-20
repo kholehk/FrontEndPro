@@ -14,14 +14,9 @@ function main() {
    const links = Object.freeze({
       "root": "/",
       "movies": "/movies",
+      "movie": "/movie",
    });
 
-   function moreAboutMovie(event) { 
-      event.preventDefault();
-      const route = new URL(event.target.href);
-      history.push(`${links.movies}${route.pathname}`);
-   }
-   
    async function renderRoute(path, wrapper) {
       let render = [];
       wrapper.innerHTML = "";
@@ -33,26 +28,23 @@ function main() {
 
             break;
          case links.movies:
+
             const movies = await getMovies(path);
 
             render = movies
                .filter(mv => mv.id)
-               .map(mv => {
-                  const card = new Card(mv);
-                  const moreLink = card.render().querySelector('[data-id="more"]');
-                  moreLink.href = `/${mv.id}`;
-                  moreLink.addEventListener("click", moreAboutMovie);
-                  return card.render();
-               });
+               .map(mv => (new Card(mv)).render());
                
+            break;
+         case links.movie:
+            if (history.location.hash) {
+               render = [(new Movie(history.location.hash)).render()];
+            }
             break;
          default:
             const err = document.createElement("h1");
             err.innerText = "404";
-            
-            const id = path.split('/movies/') || [];
-
-            render = id.length = 2? [(new Movie(id[1])).render()] : [err];
+            render = [err];
       }
 
       render.forEach( element => wrapper.appendChild(element) );
@@ -69,13 +61,15 @@ function main() {
    });
 
    const history = getHistory();
-   history.listen( listener => renderRoute(listener.location.pathname, wrapper) );
+   history.listen(listener => {
+      renderRoute(listener.location.pathname, wrapper);
+   });
    
-   const allMovies = document.querySelector(`[href="${links.movies}"]`);
-   allMovies.addEventListener("click", event => {
-
+   document.addEventListener("click", event => {
       event.preventDefault();
-      history.push(links.movies);
+
+      if (!event.target.href) return;
+      history.push(event.target.href);
 
    });
 

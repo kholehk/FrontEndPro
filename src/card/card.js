@@ -17,6 +17,8 @@ export default class Card {
       this._element.querySelectorAll("button").forEach((btn, idx) => {
          btn.addEventListener("click", event => this[eventFunction[idx]]());
       });
+
+      this._element.querySelector(`[data-id="more"]`).href = `/movie#${movie.id}`;
    }
 
    render() {
@@ -33,12 +35,11 @@ export default class Card {
       if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._movie.title}"?`)) { 
 
          console.log("DELETE MOVIE", this._movie.title);
-         // this._element.style.display = "none";
-         // this._element.innerText = "";
          this._element.remove();
 
          const path = `${location.pathname}/${this._movie.id}`;
          await deleteMovie(path);
       }
    };
+
 }
