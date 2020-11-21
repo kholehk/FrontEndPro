@@ -3,8 +3,7 @@
 import './style.css';
 
 import Root from './root/root';
-import Card from './card/card';
-import Movie from './movie/movie';
+import { CardMovie, MoreMovie } from './movie/movie';
 
 import { getMovies } from './utils/api-utils';
 import { getHistory } from './utils/app-history';
@@ -27,18 +26,17 @@ function main() {
 
             break;
          case links.movies:
-            const id = history.location.hash.slice(1) || "";
+            const id = history.location.hash.slice(1);
 
             const movies = await getMovies(`${path}/${id}`);
-            
-            if (id) {
-               render = [(new Movie(movies).render())];
-            } else { 
-               render = movies
-                  .filter(mv => mv.id)
-                  .map(mv => (new Card(mv)).render());
-            };
 
+            render = movies
+               .filter(mv => mv.id)
+               .map(mv => {
+                  const template = id ? new MoreMovie(mv) : new CardMovie(mv);
+                  return template.render();
+               });
+            
             break;
          default:
             const err = document.createElement("h1");

@@ -19,55 +19,48 @@
       <ul class="movie-info pl-0">
         <li class="d-flex">
           <p class="col-3">год</p>
-          <p class="col-9">2019</p>
+          <p class="col-9"><%-year%></p>
         </li>
         <li class="d-flex">
           <p class="col-3">страна</p>
-          <p class="col-9">США</p>
+          <p class="col-9"><%-country%></p>
         </li>
         <li class="d-flex">
           <p class="col-3">слоган</p>
-          <p class="col-9">«Imagine What He Could Become»</p>
+          <p class="col-9">«<%-slogan%>»</p>
         </li>
         <li class="d-flex">
           <p class="col-3">режиссер</p>
-          <p class="col-9">Дэвид Яровески</p>
+          <p class="col-9"><%-directors.join(", ")%></p>
         </li>
         <li class="d-flex">
           <p class="col-3">сценарий</p>
-          <p class="col-9">Брайан Ганн, Марк Ганн</p>
+          <p class="col-9"><%-writers.join(", ")%></p>
         </li>
         <li class="d-flex">
           <p class="col-3">продюсер</p>
-          <p class="col-9">Джеймс Ганн, Брайан Ганн, Марк Ганн</p>
+          <p class="col-9"><%-producers.join(", ")%></p>
         </li>
         <li class="d-flex">
           <p class="col-3">оператор</p>
-          <p class="col-9">Майкл Даллаторре</p>
+          <p class="col-9"><%-cameramens.join(", ")%></p>
         </li>
         <li class="d-flex">
           <p class="col-3">композитор</p>
-          <p class="col-9">Тим Уильямс</p>
+          <p class="col-9"><%-composers.join(", ")%></p>
         </li>
       </ul>
       <div class="movie-description mt-5">
-        <p class="font-weight-bold">IMDb: 6.60 (6688)</p>
+        <p class="font-weight-bold">IMDb: <%-IMDb%></p>
         <p><%-description%></p>
       </div>
     </div>
     <div class="col-sm-3">
       <h3>В ролях:</h3>
       <ul class="list-unstyled">
-        <li>Элизабет Бэнкс</li>
-        <li>Дэвид Денман</li>
-        <li>Джексон А. Данн</li>
-        <li>Абрахам Клинкскейлз</li>
-        <li>Кристиан Финлейсон</li>
-        <li>Дженнифер Холлэнд</li>
-        <li>Эмми Хантер</li>
-        <li>Мэтт Джонс</li>
-        <li>Мередит Хагнер</li>
-        <li>Бекки Уолстром</li>
+        <% cast.forEach(actor => { %>
+          <li><%-actor%></li>
+        <% }); %>
       </ul>
     </div>
   </div>

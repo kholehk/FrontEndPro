@@ -24,29 +24,24 @@ const movieSchema = Joi.object({
 
 app.options('/movies/:id', cors(corsOption));
 
-app.get('/movies', cors(corsOption), async (req, res) => {
-    const movies = await loadFile(filePath);
+async function getMovies(req, res) { 
 
-    if (Array.isArray(movies) && movies.length) { 
+    const { id } = req.params;
+    let movies = await loadFile(filePath);
+
+    movies = id ? movies.filter(m => m.id === id) : movies;
+
+    if (Array.isArray(movies) && movies.length) {
         res.send(movies);
         return;
     }
 
     res.sendStatus(404);
-});
+};
 
-app.get("/movies/:id", cors(corsOption), async (req, res) => {
-    const { id } = req.params;
-    const movies = await loadFile(filePath);
+app.get('/movies', cors(corsOption), async(req, res) => await getMovies(req, res));
 
-    const movie = movies.find(m => m.id === id);
-    if (movie) {
-        res.send(movie);
-        return;
-    }
-
-    res.sendStatus(404);
-});
+app.get("/movies/:id", cors(corsOption), async(req, res) => await getMovies(req, res));
 
 app.post("/movies", cors(corsOption), async (req, res) => {
     const { error } = movieSchema.validate(req.body);
@@ -61,7 +56,7 @@ app.post("/movies", cors(corsOption), async (req, res) => {
     movies.push(movie);
 
     await saveFile(filePath, movies);
-    res.send(201);
+    res.sendStatus(201);
 });
 
 app.put("/movies/:id", cors(corsOption), async (req,  res) => {
@@ -71,7 +66,7 @@ app.put("/movies/:id", cors(corsOption), async (req,  res) => {
     const moviesUpdated = movies.map(movie => movie.id === id ? { ...req.body, id } : movie);
 
     await saveFile(filePath, moviesUpdated);
-    res.send(202);
+    res.sendStatus(202);
 });
 
 app.delete("/movies/:id", cors(corsOption), async (req, res) => {
@@ -81,7 +76,7 @@ app.delete("/movies/:id", cors(corsOption), async (req, res) => {
     const moviesUpdated = movies.filter(movie => movie.id !== id);
 
     await saveFile(filePath, moviesUpdated);
-    res.send(202);
+    res.sendStatus(202);
 });
 
 app.listen(port, () => {
