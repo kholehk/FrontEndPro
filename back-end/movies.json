@@ -13,7 +13,9 @@
     "cameramens": [],
     "composers": [],
     "cast": [],
-    "IMDb": ""
+    "IMDb": "",
+    "like": "",
+    "dislike": ""
   },
   {
     "id": "63007b20-40c2-4e97-acde-96b9aa8461c6",
@@ -49,6 +51,8 @@
       "vbxcnn"
     ],
     "IMDb": "9.9",
+    "like": 1,
+    "dislike": "0",
     "poster": "https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTYtZTA3ZWFkODRkNmE2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_UY268_CR5,0,182,268_AL_.jpg"
   },
   {

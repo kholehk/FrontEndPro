@@ -3,7 +3,7 @@
 import './style.css';
 
 import Root from './root/root';
-import { CardMovie, MoreMovie } from './movie/movie';
+import Movie from './movie/movie';
 
 import { getMovies } from './utils/api-utils';
 import { getHistory } from './utils/app-history';
@@ -27,14 +27,17 @@ function main() {
             break;
          case links.movies:
             const id = history.location.hash.slice(1);
-
-            const movies = await getMovies(`${path}/${id}`);
+            const templ = id ? Movie.more : Movie.card;
+            const movies = await getMovies(id);
 
             render = movies
                .filter(mv => mv.id)
                .map(mv => {
-                  const template = id ? new MoreMovie(mv) : new CardMovie(mv);
-                  return template.render();
+                  const mvRender = (new Movie(mv, templ)).render();
+                  const more = mvRender.querySelector(`[data-id="more"]`);
+                  if (!more) return mvRender;
+                  more.href = `${links.movies}#${mv.id}`;
+                  return mvRender;
                });
             
             break;

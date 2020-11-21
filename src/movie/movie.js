@@ -3,51 +3,61 @@
 import cardTemplate from "./movie-card.html";
 import moreTemplate from "./movie-more.html";
 import { renderTemplate } from "../utils/template-utils";
-import { deleteMovie } from "../utils/api-utils";
+import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
 
-class Movie { 
-   constructor(movie, template) { 
-      this._movie = movie;
+export default class Movie {
+   constructor(movie, objTemplate) { 
+      const { template, cbEventList } = { ...objTemplate };
+      // this._movie = movie;
+      this._id = movie.id;
+      this._title = movie.title;
       this._element = renderTemplate(template, { ...movie });
+
+      this._element.querySelectorAll("button").forEach((btn, idx) => {
+         btn.addEventListener("click", event => this[cbEventList[idx]]());
+      });
    }
+
+   static get card() {
+      return {
+         template: cardTemplate,
+         cbEventList: ["edit", "remove"]
+      };
+   };
+
+   static get more() {
+      return {
+         template: moreTemplate,
+         cbEventList: ["like", "dislike"]
+      };
+   };
 
    render() { 
       return this._element;
    }
-}
 
-export class CardMovie extends Movie {
-   constructor(movie) {
-      super(movie, cardTemplate);
-
-      const eventFunction = ["editCard", "deleteCard"];
-
-      this._element.querySelectorAll("button").forEach((btn, idx) => {
-         btn.addEventListener("click", event => this[eventFunction[idx]]());
-      });
-
-      this._element.querySelector(`[data-id="more"]`).href = `/movies#${movie.id}`;
-   }
-
-   editCard() {
-      console.log("EDIT MOVIE", this._movie.title);
+   edit() {
+      console.log("EDIT MOVIE", this._title);
    };
 
-   async deleteCard() {
+   async remove() {
 
-      if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._movie.title}"?`)) {
+      if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._title}"?`)) {
 
-         console.log("DELETE MOVIE", this._movie.title);
+         console.log("DELETE MOVIE", this._title);
          this._element.remove();
 
-         const path = `${location.pathname}/${this._movie.id}`;
-         await deleteMovie(path);
+         await deleteMovie(this._id);
       }
    };
-}
 
-export class MoreMovie extends Movie { 
-   constructor(movie) {
-      super(movie, moreTemplate);
+   async like() { 
+      console.log("LIKE");
+      const movies = await getMovies(this._id);
+      movies.forEach(async mv => { mv.like++; await putMovie(this._id, mv)});
+   };
+
+   dislike() { 
+      console.log("DISLIKE");
    };
 }
