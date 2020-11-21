@@ -26,7 +26,13 @@ app.options('/movies/:id', cors(corsOption));
 
 app.get('/movies', cors(corsOption), async (req, res) => {
     const movies = await loadFile(filePath);
-    res.send(movies);
+
+    if (Array.isArray(movies) && movies.length) { 
+        res.send(movies);
+        return;
+    }
+
+    res.sendStatus(404);
 });
 
 app.get("/movies/:id", cors(corsOption), async (req, res) => {

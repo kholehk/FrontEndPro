@@ -1,7 +1,6 @@
 "use strict";
 
 import axios from 'axios';
-// const axios = require('axios').default;
 
 const urlAPI = "http://localhost:3000";
 

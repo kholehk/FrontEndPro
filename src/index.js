@@ -14,7 +14,6 @@ function main() {
    const links = Object.freeze({
       "root": "/",
       "movies": "/movies",
-      "movie": "/movie",
    });
 
    async function renderRoute(path, wrapper) {
@@ -28,18 +27,18 @@ function main() {
 
             break;
          case links.movies:
+            const id = history.location.hash.slice(1) || "";
 
-            const movies = await getMovies(path);
+            const movies = await getMovies(`${path}/${id}`);
+            
+            if (id) {
+               render = [(new Movie(movies).render())];
+            } else { 
+               render = movies
+                  .filter(mv => mv.id)
+                  .map(mv => (new Card(mv)).render());
+            };
 
-            render = movies
-               .filter(mv => mv.id)
-               .map(mv => (new Card(mv)).render());
-               
-            break;
-         case links.movie:
-            if (history.location.hash) {
-               render = [(new Movie(history.location.hash)).render()];
-            }
             break;
          default:
             const err = document.createElement("h1");

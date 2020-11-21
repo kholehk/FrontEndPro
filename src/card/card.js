@@ -9,8 +9,6 @@ export default class Card {
       this._movie = movie;
 
       this._element = renderTemplate(cardTemplate, { ...movie });
-       
-      this._element.querySelector("[data-id=poster]").src = movie.poster || "";
 
       const eventFunction = ["editCard", "deleteCard"];
 
@@ -18,7 +16,7 @@ export default class Card {
          btn.addEventListener("click", event => this[eventFunction[idx]]());
       });
 
-      this._element.querySelector(`[data-id="more"]`).href = `/movie#${movie.id}`;
+      this._element.querySelector(`[data-id="more"]`).href = `/movies#${movie.id}`;
    }
 
    render() {
