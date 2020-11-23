@@ -32,13 +32,7 @@ function main() {
 
             render = movies
                .filter(mv => mv.id)
-               .map(mv => {
-                  const mvRender = (new Movie(mv, templ)).render();
-                  const more = mvRender.querySelector(`[data-id="more"]`);
-                  if (!more) return mvRender;
-                  more.href = `${links.movies}#${mv.id}`;
-                  return mvRender;
-               });
+               .map(mv => (new Movie(mv, templ)).render());
             
             break;
          default:
