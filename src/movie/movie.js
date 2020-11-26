@@ -14,7 +14,7 @@ export default class Movie {
       this._element = renderTemplate(template, { ...movie });
 
       this._element.querySelectorAll("button").forEach((btn, idx) => {
-         btn.addEventListener("click", event => this[cbEventList[idx]](event.currentTarget));
+         btn.addEventListener("click", async event => this[cbEventList[idx]](event.currentTarget));
       });
    }
 
@@ -52,20 +52,30 @@ export default class Movie {
    };
 
    async like(target) { 
-      console.log("LIKE", target);
-      const movies = await getMovies(this._id);
-      movies.forEach(async mv => {
-         target.dataset.count = ++mv.like;
-         await putMovie(this._id, mv);
-      });
+      await this.rating(target, "like");
    };
 
    async dislike(target) { 
-      console.log("DISLIKE", target);
+      await this.rating(target, "dislike");
+   };
+
+   async rating(target, vote) {
+      let votedMovies = [];
+      try { 
+         votedMovies = await JSON.parse(localStorage.getItem("voted"));
+      } catch { 
+         votedMovies = [];
+      };
+      votedMovies = Array.isArray(votedMovies) ? votedMovies : [];
+      if (votedMovies.includes(this._id)) return;
+
       const movies = await getMovies(this._id);
       movies.forEach(async mv => {
-         target.dataset.count = ++mv.dislike;
+         target.dataset.count = ++mv[vote];
          await putMovie(this._id, mv);
       });
-   };
+
+      votedMovies.push(this._id);
+      localStorage.setItem("voted", JSON.stringify(votedMovies));
+   }
 }
