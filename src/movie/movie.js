@@ -2,6 +2,8 @@
 
 import cardTemplate from "./movie-card.html";
 import moreTemplate from "./movie-more.html";
+import removesTemplate from "./movie-removes.html";
+
 import { renderTemplate } from "../utils/template-utils";
 import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
 
@@ -9,16 +11,16 @@ export default class Movie {
    constructor(movie, objTemplate) { 
       const { template, cbOnClick } = { ...objTemplate };
       // this._movie = movie;
-      this._id = movie.id;
-      this._title = movie.title;
+      this.id = movie.id;
+      this.title = movie.title;
       this._element = renderTemplate(template, { ...movie });
 
       this._element.querySelectorAll("button").forEach((btn, idx) => {
          btn.addEventListener("click", event => { 
             const cb = Movie[cbOnClick[idx]].bind(this);
-            if (typeof cb === "function") {
-               cb(event.currentTarget);
-            }
+
+            if (typeof cb !== "function") return;
+            cb(event.currentTarget);
          })
       });
    }
@@ -37,23 +39,44 @@ export default class Movie {
       };
    };
 
+   static get removes() { 
+      return {
+         template: removesTemplate,
+         cbOnClick: ["cancel", "cancel", "erase"]
+      };
+   };
+
    render() { 
       return this._element;
    }
 
    static async edit(target) {
-      console.log("EDIT MOVIE", this._title, target);
+      console.log("EDIT MOVIE", this.title, target);
    };
 
    static async remove(target) {
+      console.log("DELETE MOVIE", this.title, target);
 
-      if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._title}"?`)) {
+      const mv = { ...this };
+      const templ = Movie.removes;
+      const confirmErase = new Movie(mv, templ);
+      this._element.appendChild(confirmErase.render());
+      
+      // if (confirm(`Ви дійсно бажаєте видалити фільм: "${this.title}"?`)) {
 
-         console.log("DELETE MOVIE", this._title, target);
-         this._element.remove();
+      //    this._element.remove();
 
-         await deleteMovie(this._id);
-      }
+      //    await deleteMovie(this.id);
+      // }
+   };
+
+   static async erase(target) { 
+      this._element.parentElement.remove();
+      await deleteMovie(this.id);
+   };
+
+   static async cancel(target) { 
+      this._element.remove();
    };
 
    static async like(target) { 
@@ -72,15 +95,15 @@ export default class Movie {
          votedMovies = [];
       };
       votedMovies = Array.isArray(votedMovies) ? votedMovies : [];
-      if (votedMovies.includes(this._id)) return;
+      if (votedMovies.includes(this.id)) return;
 
-      const movies = await getMovies(this._id);
+      const movies = await getMovies(this.id);
       movies.forEach(async mv => {
          target.dataset.count = ++mv[vote];
-         await putMovie(this._id, mv);
+         await putMovie(this.id, mv);
       });
 
-      votedMovies.push(this._id);
+      votedMovies.push(this.id);
       localStorage.setItem("voted", JSON.stringify(votedMovies));
    }
 }
