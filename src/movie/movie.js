@@ -7,28 +7,33 @@ import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
 
 export default class Movie {
    constructor(movie, objTemplate) { 
-      const { template, cbEventList } = { ...objTemplate };
+      const { template, cbOnClick } = { ...objTemplate };
       // this._movie = movie;
       this._id = movie.id;
       this._title = movie.title;
       this._element = renderTemplate(template, { ...movie });
 
       this._element.querySelectorAll("button").forEach((btn, idx) => {
-         btn.addEventListener("click", async event => this[cbEventList[idx]](event.currentTarget));
+         btn.addEventListener("click", event => { 
+            const cb = Movie[cbOnClick[idx]].bind(this);
+            if (typeof cb === "function") {
+               cb(event.currentTarget);
+            }
+         })
       });
    }
 
    static get card() {
       return {
          template: cardTemplate,
-         cbEventList: ["edit", "remove"]
+         cbOnClick: ["edit", "remove"]
       };
    };
 
    static get more() {
       return {
          template: moreTemplate,
-         cbEventList: ["like", "dislike"]
+         cbOnClick: ["like", "dislike"]
       };
    };
 
@@ -36,11 +41,11 @@ export default class Movie {
       return this._element;
    }
 
-   edit(target) {
+   static async edit(target) {
       console.log("EDIT MOVIE", this._title, target);
    };
 
-   async remove(target) {
+   static async remove(target) {
 
       if (confirm(`Ви дійсно бажаєте видалити фільм: "${this._title}"?`)) {
 
@@ -51,18 +56,18 @@ export default class Movie {
       }
    };
 
-   async like(target) { 
+   static async like(target) { 
       await this.rating(target, "like");
    };
 
-   async dislike(target) { 
+   static async dislike(target) { 
       await this.rating(target, "dislike");
    };
 
    async rating(target, vote) {
       let votedMovies = [];
       try { 
-         votedMovies = await JSON.parse(localStorage.getItem("voted"));
+         votedMovies = JSON.parse(localStorage.getItem("voted"));
       } catch { 
          votedMovies = [];
       };
