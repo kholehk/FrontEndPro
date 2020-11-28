@@ -14,6 +14,8 @@ const corsOption = {
 
 const app = express();
 app.use(express.json());
+app.use(cors());
+app.options('/:id', cors(corsOption));
 
 const port = 3000;
 
@@ -21,8 +23,6 @@ const movieSchema = Joi.object({
     title: Joi.string().required(),
     description: Joi.string().required()
 });
-
-app.options('/:id', cors(corsOption));
 
 async function getMovies(req, res) { 
 
@@ -39,11 +39,11 @@ async function getMovies(req, res) {
     res.sendStatus(404);
 };
 
-app.get('/movies', cors(corsOption), async(req, res) => await getMovies(req, res));
+app.get('/movies', async(req, res) => await getMovies(req, res));
 
-app.get("/:id", cors(corsOption), async(req, res) => await getMovies(req, res));
+app.get("/:id", async(req, res) => await getMovies(req, res));
 
-app.post("/movies", cors(corsOption), async (req, res) => {
+app.post("/movies", async (req, res) => {
     const { error } = movieSchema.validate(req.body);
     if (error) {
         res.sendStatus(403).send(error);
@@ -59,7 +59,7 @@ app.post("/movies", cors(corsOption), async (req, res) => {
     res.sendStatus(201);
 });
 
-app.put("/:id", cors(corsOption), async (req,  res) => {
+app.put("/:id", async (req,  res) => {
     const { id } = req.params;
 
     const movies = await loadFile(filePath);
@@ -69,7 +69,7 @@ app.put("/:id", cors(corsOption), async (req,  res) => {
     res.sendStatus(202);
 });
 
-app.delete("/:id", cors(corsOption), async (req, res) => {
+app.delete("/:id", async (req, res) => {
     const { id } = req.params;
 
     const movies = await loadFile(filePath);
