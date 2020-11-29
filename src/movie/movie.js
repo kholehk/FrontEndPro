@@ -10,7 +10,6 @@ import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
 export default class Movie {
    constructor(movie, objTemplate) { 
       const { template, cbOnClick } = { ...objTemplate };
-      // this._movie = movie;
       this.id = movie.id;
       this.title = movie.title;
       this._element = renderTemplate(template, { ...movie });
@@ -28,7 +27,7 @@ export default class Movie {
    static get card() {
       return {
          template: cardTemplate,
-         cbOnClick: ["edit", "remove"]
+         cbOnClick: ["editRequest", "removeRequest"]
       };
    };
 
@@ -42,41 +41,36 @@ export default class Movie {
    static get removes() { 
       return {
          template: removesTemplate,
-         cbOnClick: ["cancel", "cancel", "erase"]
+         cbOnClick: ["cancel", "cancel", "removeConfirm"]
       };
    };
 
-   render() { 
+   get render() { 
       return this._element;
    }
 
-   static async edit(target) {
+   static async editRequest(target) {
       console.log("EDIT MOVIE", this.title, target);
    };
 
-   static async remove(target) {
+   static async removeRequest(target) {
       console.log("DELETE MOVIE", this.title, target);
 
       const mv = { ...this };
       const templ = Movie.removes;
-      const confirmErase = new Movie(mv, templ);
-      this._element.appendChild(confirmErase.render());
-      
-      // if (confirm(`Ви дійсно бажаєте видалити фільм: "${this.title}"?`)) {
+      this.render.appendChild((new Movie(mv, templ)).render);
 
-      //    this._element.remove();
-
-      //    await deleteMovie(this.id);
-      // }
+      $(".removes").on('shown.bs.modal', () => $(".close").trigger('focus'));
+      $(".btn-primary").on("click", () => this.render.style.display = "none");
+      $(".removes").on("hidden.bs.modal", event => event.currentTarget.remove());
    };
 
-   static async erase(target) { 
-      this._element.parentElement.remove();
+   static async removeConfirm(target) {
       await deleteMovie(this.id);
    };
 
    static async cancel(target) { 
-      this._element.remove();
+      // this.render.remove();
    };
 
    static async like(target) { 

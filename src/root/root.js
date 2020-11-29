@@ -10,7 +10,7 @@ export default class Root {
       
    }
 
-   render() {
+   get render() {
    
       return this._element;
    };

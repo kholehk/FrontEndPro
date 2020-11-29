@@ -22,7 +22,7 @@ function main() {
       switch (path) {
          case links.root:
 
-            render = [(new Root).render()];
+            render = [(new Root).render];
 
             break;
          case links.movies:
@@ -32,7 +32,7 @@ function main() {
 
             render = movies
                .filter(mv => mv.id)
-               .map(mv => (new Movie(mv, templ)).render());
+               .map(mv => (new Movie(mv, templ)).render);
             
             break;
          default:
@@ -68,7 +68,7 @@ function main() {
    });
 
    wrapper.innerHTML = "";
-   wrapper.appendChild((new Root).render());
+   wrapper.appendChild((new Root).render);
 }
 
 main();
