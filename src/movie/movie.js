@@ -2,7 +2,7 @@
 
 import cardTemplate from "./movie-card.html";
 import moreTemplate from "./movie-more.html";
-import removesTemplate from "./movie-removes.html";
+import removeTemplate from "./movie-remove.html";
 
 import { renderTemplate } from "../utils/template-utils";
 import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
@@ -16,10 +16,10 @@ export default class Movie {
 
       this._element.querySelectorAll("button").forEach((btn, idx) => {
          btn.addEventListener("click", event => { 
-            const cb = Movie[cbOnClick[idx]].bind(this);
+            const cb = Movie[cbOnClick[idx]];
 
             if (typeof cb !== "function") return;
-            cb(event.currentTarget);
+            cb.bind(this)(event.currentTarget);
          })
       });
    }
@@ -27,7 +27,7 @@ export default class Movie {
    static get card() {
       return {
          template: cardTemplate,
-         cbOnClick: ["editRequest", "removeRequest"]
+         cbOnClick: ["edit", "remove"]
       };
    };
 
@@ -38,39 +38,36 @@ export default class Movie {
       };
    };
 
-   static get removes() { 
-      return {
-         template: removesTemplate,
-         cbOnClick: ["cancel", "cancel", "removeConfirm"]
-      };
-   };
-
    get render() { 
       return this._element;
    }
 
-   static async editRequest(target) {
+   static async edit(target) {
       console.log("EDIT MOVIE", this.title, target);
    };
 
-   static async removeRequest(target) {
+   static async remove(target) {
       console.log("DELETE MOVIE", this.title, target);
 
       const mv = { ...this };
-      const templ = Movie.removes;
-      this.render.appendChild((new Movie(mv, templ)).render);
+      const templ = {
+         template: removeTemplate,
+         cbOnClick: []
+      };
+      const confirmRemove = new Movie(mv, templ).render;
 
-      $(".removes").on('shown.bs.modal', () => $(".close").trigger('focus'));
-      $(".btn-primary").on("click", () => this.render.style.display = "none");
-      $(".removes").on("hidden.bs.modal", event => event.currentTarget.remove());
-   };
+      this.render.appendChild(confirmRemove);
+      confirmRemove.querySelector(`[type="submit"]`)
+         .addEventListener("click", async () => {
+            await deleteMovie(this.id);
+            this.render.style.display = "none";
+         });
 
-   static async removeConfirm(target) {
-      await deleteMovie(this.id);
-   };
+      $(confirmRemove).on('shown.bs.modal', () => $(".close").trigger('focus'));
 
-   static async cancel(target) { 
-      // this.render.remove();
+      $(confirmRemove).on("hidden.bs.modal", event => event.currentTarget.remove());
+
+      $(confirmRemove).modal("show");
    };
 
    static async like(target) { 
