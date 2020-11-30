@@ -2,6 +2,7 @@
 
 import cardTemplate from "./movie-card.html";
 import moreTemplate from "./movie-more.html";
+import editTemplate from "./movie-edit.html";
 import removeTemplate from "./movie-remove.html";
 
 import { renderTemplate } from "../utils/template-utils";
@@ -43,11 +44,27 @@ export default class Movie {
    }
 
    static async edit(target) {
-      console.log("EDIT MOVIE", this.title, target);
+      console.log("EDIT MOVIE");
+
+      const mv = { ...this };
+      const templ = {
+         template: editTemplate,
+         cbOnClick: []
+      };
+      const confirmEdit = new Movie(mv, templ).render;
+      this.render.appendChild(confirmEdit);
+      confirmEdit.querySelector(`[type="submit"]`)
+         .addEventListener("click", async () => {});
+
+      $(confirmEdit).on('shown.bs.modal', () => $(".close").trigger('focus'));
+
+      $(confirmEdit).on("hidden.bs.modal", event => event.currentTarget.remove());
+
+      $(confirmEdit).modal("show");
    };
 
    static async remove(target) {
-      console.log("DELETE MOVIE", this.title, target);
+      console.log("DELETE MOVIE");
 
       const mv = { ...this };
       const templ = {
