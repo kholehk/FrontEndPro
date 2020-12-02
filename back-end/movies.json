@@ -8,12 +8,15 @@
     "country": "",
     "slogan": "",
     "directors": [],
-    "writers": [],
-    "producers": [],
-    "cameramens": [],
-    "composers": [],
     "cast": [],
+    "others": {
+      "writers": [],
+      "producers": [],
+      "cameramens": [],
+      "composers": []
+    },
     "IMDb": "",
+    "description": "",
     "like": "",
     "dislike": ""
   },
@@ -26,22 +29,8 @@
     "country": "США",
     "slogan": "Say my name",
     "directors": [
-      "Peter"
-    ],
-    "writers": [
-      "Paul",
+      "Peter",
       "Jhon"
-    ],
-    "producers": [
-      "A",
-      "B",
-      "C"
-    ],
-    "cameramens": [
-      "Lorem"
-    ],
-    "composers": [
-      "Mozart"
     ],
     "cast": [
       "wqeretty",
@@ -50,8 +39,27 @@
       "fvgthnhjk",
       "vbxcnn"
     ],
+    "others": {
+      "сценарій": [
+        "Paul",
+        "Jhon"
+      ],
+      "продюсер": [
+        "A",
+        "B",
+        "C"
+      ],
+      "оператор": [
+        "Lorem",
+        "fgfgghhtr",
+        "fggfrgr rgjytjkrmyki,"
+      ],
+      "композитор": [
+        "Mozart"
+      ]
+    },
     "IMDb": "9.9",
-    "like": 21,
+    "like": 22,
     "dislike": 22,
     "poster": "https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTYtZTA3ZWFkODRkNmE2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_UY268_CR5,0,182,268_AL_.jpg"
   },

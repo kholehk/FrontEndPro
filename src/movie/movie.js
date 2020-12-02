@@ -43,24 +43,33 @@ export default class Movie {
       return this._element;
    }
 
+   async modal(mv, templ, cbSubmit) {
+      const modalMovie = new Movie(mv, templ).render;
+
+      this.render.appendChild(modalMovie);
+      modalMovie.querySelector(`[type="submit"]`)
+         .addEventListener("click", async () => cbSubmit());
+
+      $(modalMovie).on('shown.bs.modal', () => $(".close").trigger('focus'));
+
+      $(modalMovie).on("hidden.bs.modal", event => event.currentTarget.remove());
+
+      $(modalMovie).modal("show");
+   }
+
    static async edit(target) {
       console.log("EDIT MOVIE");
 
-      const mv = { ...this };
       const templ = {
          template: editTemplate,
          cbOnClick: []
       };
-      const confirmEdit = new Movie(mv, templ).render;
-      this.render.appendChild(confirmEdit);
-      confirmEdit.querySelector(`[type="submit"]`)
-         .addEventListener("click", async () => {});
 
-      $(confirmEdit).on('shown.bs.modal', () => $(".close").trigger('focus'));
-
-      $(confirmEdit).on("hidden.bs.modal", event => event.currentTarget.remove());
-
-      $(confirmEdit).modal("show");
+      const movies = await getMovies(this.id);
+      movies.forEach(mv => {
+         mv.header = "Редагувати цей фільм";
+         this.modal(mv, templ);
+      });
    };
 
    static async remove(target) {
@@ -71,20 +80,11 @@ export default class Movie {
          template: removeTemplate,
          cbOnClick: []
       };
-      const confirmRemove = new Movie(mv, templ).render;
 
-      this.render.appendChild(confirmRemove);
-      confirmRemove.querySelector(`[type="submit"]`)
-         .addEventListener("click", async () => {
-            await deleteMovie(this.id);
-            this.render.style.display = "none";
-         });
-
-      $(confirmRemove).on('shown.bs.modal', () => $(".close").trigger('focus'));
-
-      $(confirmRemove).on("hidden.bs.modal", event => event.currentTarget.remove());
-
-      $(confirmRemove).modal("show");
+      this.modal(mv, templ, async () => {
+         await deleteMovie(this.id);
+         this.render.style.display = "none";
+      });
    };
 
    static async like(target) { 

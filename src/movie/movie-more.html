@@ -30,25 +30,15 @@
           <p class="col-9">«<%-slogan%>»</p>
         </li>
         <li class="d-flex">
-          <p class="col-3">режиссер</p>
+          <p class="col-3">режисер</p>
           <p class="col-9"><%-directors.join(", ")%></p>
         </li>
-        <li class="d-flex">
-          <p class="col-3">сценарий</p>
-          <p class="col-9"><%-writers.join(", ")%></p>
-        </li>
-        <li class="d-flex">
-          <p class="col-3">продюсер</p>
-          <p class="col-9"><%-producers.join(", ")%></p>
-        </li>
-        <li class="d-flex">
-          <p class="col-3">оператор</p>
-          <p class="col-9"><%-cameramens.join(", ")%></p>
-        </li>
-        <li class="d-flex">
-          <p class="col-3">композитор</p>
-          <p class="col-9"><%-composers.join(", ")%></p>
-        </li>
+        <% for(key in others) {%>
+          <li class="d-flex">
+            <p class="col-3"><%-key%></p>
+            <p class="col-9"><%-others[key].join(", ")%></p>
+          </li>
+        <% } %>
       </ul>
       <div class="movie-description mt-5">
         <p class="font-weight-bold">IMDb: <%-IMDb%></p>
