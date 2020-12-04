@@ -21,7 +21,9 @@ const port = 3000;
 
 const movieSchema = Joi.object({
     title: Joi.string().required(),
-    description: Joi.string().required()
+    description: Joi.string().required(),
+    directors: Joi.string().required(),
+    cast: Joi.array().required(),
 });
 
 async function getMovies(req, res) { 

@@ -1,84 +1,34 @@
 [
   {
-    "id": "",
-    "title": "",
-    "titleOrigin": "",
-    "poster": "",
-    "year": "",
-    "country": "",
-    "slogan": "",
-    "directors": [],
-    "cast": [],
-    "others": {
-      "writers": [],
-      "producers": [],
-      "cameramens": [],
-      "composers": []
-    },
-    "IMDb": "",
-    "description": "",
-    "like": "",
-    "dislike": ""
-  },
-  {
     "id": "63007b20-40c2-4e97-acde-96b9aa8461c6",
-    "title": "Breaking Bad",
-    "titleOrigin": "Breaking Bad",
-    "description": "Say my name",
-    "year": "2020",
+    "title": "Зелена книга",
+    "titleOrigin": "Green Book",
+    "description": "У 1962 році викидайла італо-американського походження Тоні Валлелонга на прізвисько «Тоні Балакун» (Вігго Мортенсен) наймають шофером на час туру відомого афроамериканського джазового піаніста Дона Ширлі (Магершала Алі). За угодою, Тоні отримає повний обсяг гонорару у тому випадку, якщо Дон вчасно прибуде і відігає усі заплановані концерти. Усі, окрім останнього відбулись, однак Дон сам вирішив не виступати для публіки, що забороняє йому їсти разом з ними. Абсолютно різні, вони разом подорожують провінційним півднем США. Дорогою вони користуються так званою «Зеленою книгою негритянського автомобіліста» Віктора Г'юґо Ґріна, що містить інформацію про безпечні місця для афроамериканців. Ця подорож розкриє їм очі на багато речей, що відбуваються у світі навколо них.",
+    "year": "2018",
     "country": "США",
-    "slogan": "Say my name",
-    "directors": [
-      "Peter",
-      "Jhon"
-    ],
+    "slogan": "Inspired by a true friendship",
+    "director": "Peter Farrelly",
     "cast": [
-      "wqeretty",
-      "asdfvasfd",
-      "dsfsdfas",
-      "fvgthnhjk",
-      "vbxcnn"
+      "Вігго Мортенсен",
+      "Магершала Алі",
+      "Лінда Карделлін"
     ],
     "others": {
-      "сценарій": [
-        "Paul",
-        "Jhon"
+      "producer": [
+        "Джим Берк", 
+        "Браян Гейєс Каррі"
       ],
-      "продюсер": [
-        "A",
-        "B",
-        "C"
+      "camera": [
+        "Шон Портер"
       ],
-      "оператор": [
-        "Lorem",
-        "fgfgghhtr",
-        "fggfrgr rgjytjkrmyki,"
-      ],
-      "композитор": [
-        "Mozart"
+      "author": [
+        "Нік Валлелонга", 
+        "Пітер Фарреллі"
       ]
     },
-    "IMDb": "9.9",
+    "IMDb": "8.2",
     "like": 22,
     "dislike": 22,
-    "poster": "https://m.media-amazon.com/images/M/MV5BMjhiMzgxZTctNDc1Ni00OTIxLTlhMTYtZTA3ZWFkODRkNmE2XkEyXkFqcGdeQXVyNzkwMjQ5NzM@._V1_UY268_CR5,0,182,268_AL_.jpg"
-  },
-  {
-    "id": "cbc74e40-1f08-4ebf-891d-6ea48a657e19",
-    "title": "The Boys",
-    "titleOrigin": "The Boys",
-    "description": "Great movie!",
-    "IMDb": "9.9",
-    "like": 21,
-    "dislike": 22,
-    "poster": "https://m.media-amazon.com/images/M/MV5BNGEyOGJiNWEtMTgwMi00ODU4LTlkMjItZWI4NjFmMzgxZGY2XkEyXkFqcGdeQXVyNjcyNjcyMzQ@._V1_UX182_CR0,0,182,268_AL_.jpg"
-  },
-  {
-    "title": "New Pope",
-    "titleOrigin": "New Pope",
-    "description": "Jude Law",
-    "id": "5b8814b8-413f-48bb-8c52-f9d7f2b395f2",
-    "IMDb": "9.9",
-    "poster": "https://m.media-amazon.com/images/M/MV5BZGQzZDk2NTgtNTRjMS00MDI0LWIwZWQtNDZjODZhOGI1YzliXkEyXkFqcGdeQXVyMTkxNjUyNQ@@._V1_UX182_CR0,0,182,268_AL_.jpg"
+    "poster": "https://m.media-amazon.com/images/M/MV5BYzIzYmJlYTYtNGNiYy00N2EwLTk4ZjItMGYyZTJiOTVkM2RlXkEyXkFqcGdeQXVyODY1NDk1NjE@._V1_UX182_CR0,0,182,268_AL_.jpg"
   }
 ]

@@ -30,7 +30,7 @@
               <label class="custom-file-label" for="upload-poster">Виберіть файл</label>
             </div>
           </div> -->
-          <fieldset class="form-group">
+          <fieldset class="form-group" data-id="detailed">
             <legend class="col-form-label pt-0">Детальна інформація:</legend>
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Рік:</label>
@@ -53,25 +53,36 @@
             <div class="form-group row">
               <label class="col-sm-2 col-form-label">Режисер:</label>
               <div class="col-sm-8">
-                <input type="text" class="form-control" value="<%-directors.join(', ')%>" name="directors">
+                <input type="text" class="form-control" value="<%-director%>" name="directors">
               </div>
               <div class="col-sm-2">
                 <button class="btn btn-primary btn-add-field" type="button"><svg class="octicon octicon-plus" viewBox="0 0 12 16" version="1.1" width="12" height="16" aria-hidden="true"><path fill-rule="evenodd" d="M12 9H7v5H5V9H0V7h5V2h2v5h5v2z"></path></svg></button>
               </div>
             </div>
-            <% for(key in others) { %>
-            <div class="form-group row">
+            <% for(key in others) { others[key].forEach(elem => { %>
+                <div class="form-group row" data-id="others">
+                  <div class="col-sm-5">
+                    <input type="text" class="form-control" placeholder="Посада" value="<%-key%>" name="others">
+                  </div>
+                  <div class="col-sm-5">
+                    <input type="text" class="form-control" placeholder="Ім'я" value="<%-elem%>" name="<%-key%>">
+                  </div>
+                  <div class="col-sm-2">
+                    <button class="btn btn-danger btn-sm btn-remove-field" type="button" data-click="delPosition"><svg class="octicon octicon-x" viewBox="0 0 14 18" version="1.1" width="14" height="18" aria-hidden="true"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"></path></svg></button>
+                  </div>
+                </div>
+            <% })}; %>
+            <div class="form-group row" data-id="others">
               <div class="col-sm-5">
-                <input type="text" class="form-control" placeholder="Посада" value="<%-key%>" name="others">
+                <input type="text" class="form-control" placeholder="Посада" name="others">
               </div>
               <div class="col-sm-5">
-                <input type="text" class="form-control" placeholder="Ім'я" value="<%-others[key].join(', ')%>" name="<%-key%>">
+                <input type="text" class="form-control" placeholder="Ім'я">
               </div>
               <div class="col-sm-2">
-                <button class="btn btn-danger btn-sm btn-remove-field" type="button"><svg class="octicon octicon-x" viewBox="0 0 14 18" version="1.1" width="14" height="18" aria-hidden="true"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"></path></svg></button>
+                <button class="btn btn-danger btn-sm btn-remove-field" type="button" data-click="delPosition"><svg class="octicon octicon-x" viewBox="0 0 14 18" version="1.1" width="14" height="18" aria-hidden="true"><path fill-rule="evenodd" d="M7.48 8l3.75 3.75-1.48 1.48L6 9.48l-3.75 3.75-1.48-1.48L4.52 8 .77 4.25l1.48-1.48L6 6.52l3.75-3.75 1.48 1.48L7.48 8z"></path></svg></button>
               </div>
             </div>
-            <% } %>
           </fieldset>
           <div class="form-group">
             <label>В ролях:</label>

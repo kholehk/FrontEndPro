@@ -10,7 +10,7 @@ import removeTemplate from "./movie-remove.html";
 import { renderTemplate } from "../utils/template-utils";
 import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
 
-const ElementForSave = [HTMLInputElement, HTMLTextAreaElement];
+const elementForSave = [HTMLInputElement, HTMLTextAreaElement];
 export default class Movie {
    constructor(movie, objTemplate) { 
       const { template, cbOnClick } = { ...objTemplate };
@@ -19,11 +19,13 @@ export default class Movie {
       this._element = renderTemplate(template, { ...movie });
 
       this._element.querySelectorAll("button").forEach((btn, idx) => {
+         cbOnClick[idx] = btn.dataset.click ? btn.dataset.click : cbOnClick[idx];
+
          btn.addEventListener("click", event => { 
             const cb = Movie[cbOnClick[idx]];
 
             if (typeof cb !== "function") return;
-            cb.bind(this)(event.currentTarget);
+            cb.bind(this)(event);
          })
       });
    }
@@ -44,7 +46,7 @@ export default class Movie {
 
    get render() { 
       return this._element;
-   }
+   };
 
    async createModal(mv, templ, cbSubmit) {
       const modalMovie = (new Movie(mv, templ)).render;
@@ -61,39 +63,67 @@ export default class Movie {
    }
 
    static isElementForSave(elem) {
-      return ElementForSave.find(html => elem instanceof html);
+      return elementForSave.find(html => elem instanceof html);
    }
 
-   static async edit(target) {
+   static async edit(event) {
       console.log("EDIT MOVIE");
 
       const templ = {
          template: editTemplate,
-         cbOnClick: []
+         cbOnClick: ["", "addPosition"]
       };
 
       const movies = await getMovies(this.id);
       movies.forEach(mv => {
-         mv.header = "Редагувати цей фільм";
-         this.createModal(mv, templ, async (event) => {
-            console.log("SUBMIT", event.currentTarget, this.id);
+         const header = "Редагувати цей фільм";
+         this.createModal({...mv, header}, templ, async (event) => {
+
             const mvEdited = Array.from(event.currentTarget.form)
                .filter(elem => Movie.isElementForSave(elem))
-               .reduce((result, elem) => {
+               .reduce((result, elem, idx, arr) => {
+                  if (elem.name === "" || elem.value === "") return result;
+
                   if (elem.name === "others") {
                      result[elem.name][elem.value] = "";
+                     arr[idx+1].name = elem.value;
+
                      return result;
-                  }
+                  };
+
                   const obj = (elem.name in result.others)? result.others : result;
-                  obj[elem.name] = elem.value;
+                  obj[elem.name] = (elem.name === "cast")? elem.value.split(", ") : elem.value;
+
                   return result;
                }, { others: {}});
-            console.log(mvEdited);
+
+            const resultMovie = {...mv, ...mvEdited};
+
+            await putMovie(this.id, resultMovie);
+            this.render.replaceWith((new Movie(resultMovie, Movie.card)).render);
          });
       });
    };
 
-   static async remove(target) {
+   static addPosition(event) {
+      const detailed = this.render.querySelector("[data-id='detailed']");
+
+      const newPosition = detailed.lastElementChild.cloneNode(true);
+
+      newPosition
+         .querySelector("button")
+         .addEventListener("click", event => Movie.delPosition.bind(this)(event));
+
+      detailed.appendChild(newPosition);
+   };
+
+   static delPosition(event) {
+      event.path
+      .find(elem => elem.dataset.id === "others")
+      .remove();
+   };
+
+   static async remove(event) {
       console.log("DELETE MOVIE");
 
       const mv = { ...this };
@@ -108,25 +138,29 @@ export default class Movie {
       });
    };
 
-   static async like(target) { 
-      await this.rating(target, "like");
+   static async like(event) { 
+      await this.rating(event.currentTarget, "like");
    };
 
-   static async dislike(target) { 
-      await this.rating(target, "dislike");
+   static async dislike(event) { 
+      await this.rating(event.currentTarget, "dislike");
    };
 
    async rating(target, vote) {
       let votedMovies = [];
+
       try { 
          votedMovies = JSON.parse(localStorage.getItem("voted"));
       } catch { 
          votedMovies = [];
       };
+
       votedMovies = Array.isArray(votedMovies) ? votedMovies : [];
+
       if (votedMovies.includes(this.id)) return;
 
       const movies = await getMovies(this.id);
+
       movies.forEach(async mv => {
          target.dataset.count = ++mv[vote];
          await putMovie(this.id, mv);
