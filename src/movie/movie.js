@@ -1,5 +1,7 @@
 "use strict";
 
+import $ from "jquery";
+import "bootstrap";
 import cardTemplate from "./movie-card.html";
 import moreTemplate from "./movie-more.html";
 import editTemplate from "./movie-edit.html";
@@ -8,6 +10,7 @@ import removeTemplate from "./movie-remove.html";
 import { renderTemplate } from "../utils/template-utils";
 import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
 
+const ElementForSave = [HTMLInputElement, HTMLTextAreaElement];
 export default class Movie {
    constructor(movie, objTemplate) { 
       const { template, cbOnClick } = { ...objTemplate };
@@ -43,18 +46,22 @@ export default class Movie {
       return this._element;
    }
 
-   async modal(mv, templ, cbSubmit) {
-      const modalMovie = new Movie(mv, templ).render;
+   async createModal(mv, templ, cbSubmit) {
+      const modalMovie = (new Movie(mv, templ)).render;
 
       this.render.appendChild(modalMovie);
-      modalMovie.querySelector(`[type="submit"]`)
-         .addEventListener("click", async () => cbSubmit());
 
-      $(modalMovie).on('shown.bs.modal', () => $(".close").trigger('focus'));
+      $(modalMovie).on("shown.bs.modal", () => $(".close").trigger("focus"));
 
       $(modalMovie).on("hidden.bs.modal", event => event.currentTarget.remove());
 
+      $(modalMovie).find("[type='submit']").on("click", async event => await cbSubmit(event));
+
       $(modalMovie).modal("show");
+   }
+
+   static isElementForSave(elem) {
+      return ElementForSave.find(html => elem instanceof html);
    }
 
    static async edit(target) {
@@ -68,7 +75,21 @@ export default class Movie {
       const movies = await getMovies(this.id);
       movies.forEach(mv => {
          mv.header = "Редагувати цей фільм";
-         this.modal(mv, templ);
+         this.createModal(mv, templ, async (event) => {
+            console.log("SUBMIT", event.currentTarget, this.id);
+            const mvEdited = Array.from(event.currentTarget.form)
+               .filter(elem => Movie.isElementForSave(elem))
+               .reduce((result, elem) => {
+                  if (elem.name === "others") {
+                     result[elem.name][elem.value] = "";
+                     return result;
+                  }
+                  const obj = (elem.name in result.others)? result.others : result;
+                  obj[elem.name] = elem.value;
+                  return result;
+               }, { others: {}});
+            console.log(mvEdited);
+         });
       });
    };
 
@@ -81,7 +102,7 @@ export default class Movie {
          cbOnClick: []
       };
 
-      this.modal(mv, templ, async () => {
+      this.createModal(mv, templ, async () => {
          await deleteMovie(this.id);
          this.render.style.display = "none";
       });
