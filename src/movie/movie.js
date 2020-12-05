@@ -2,13 +2,14 @@
 
 import $ from "jquery";
 import "bootstrap";
+
 import cardTemplate from "./movie-card.html";
 import moreTemplate from "./movie-more.html";
 import editTemplate from "./movie-edit.html";
 import removeTemplate from "./movie-remove.html";
 
 import { renderTemplate } from "../utils/template-utils";
-import { deleteMovie, getMovies, putMovie } from "../utils/api-utils";
+import { getMovies, postMovie, putMovie, deleteMovie } from "../utils/api-utils";
 
 const elementForSave = [HTMLInputElement, HTMLTextAreaElement];
 export default class Movie {
@@ -29,6 +30,11 @@ export default class Movie {
          })
       });
    }
+
+   static get idBlank() {
+
+      return "195260df-34ae-4682-9a8e-14030cf3f929";
+   };
 
    static get card() {
       return {
@@ -76,7 +82,7 @@ export default class Movie {
 
       const movies = await getMovies(this.id);
       movies.forEach(mv => {
-         const header = "Редагувати цей фільм";
+         const header = mv.id !== Movie.idBlank ? "Редагувати цей фільм" : "Додати новий фільм"; 
          this.createModal({...mv, header}, templ, async (event) => {
 
             const mvEdited = Array.from(event.currentTarget.form)
@@ -101,8 +107,12 @@ export default class Movie {
 
             const resultMovie = {...mv, ...mvEdited};
 
-            await putMovie(this.id, resultMovie);
-            this.render.replaceWith((new Movie(resultMovie, Movie.card)).render);
+            if (this.id !== Movie.idBlank) {
+               await putMovie(this.id, resultMovie);
+               this.render.replaceWith((new Movie(resultMovie, Movie.card)).render);
+            } else {
+               await postMovie(resultMovie);
+            };
          });
       });
    };

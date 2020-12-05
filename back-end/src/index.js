@@ -20,10 +20,9 @@ app.options('/:id', cors(corsOption));
 const port = 3000;
 
 const movieSchema = Joi.object({
-    title: Joi.string().required(),
-    description: Joi.string().required(),
-    directors: Joi.string().required(),
-    cast: Joi.array().required(),
+    title: Joi.array().required(),
+    like: Joi.string().required(),
+    dislike: Joi.string().required(),
 });
 
 async function getMovies(req, res) { 
@@ -46,11 +45,11 @@ app.get('/movies', async(req, res) => await getMovies(req, res));
 app.get("/:id", async(req, res) => await getMovies(req, res));
 
 app.post("/movies", async (req, res) => {
-    const { error } = movieSchema.validate(req.body);
-    if (error) {
-        res.sendStatus(403).send(error);
-        return;
-    }
+    // const { error } = movieSchema.validate(req.body);
+    // if (error) {
+    //     res.sendStatus(403).send(error);
+    //     return;
+    // }
 
     const movie = { ...req.body, id: uuid() };
 

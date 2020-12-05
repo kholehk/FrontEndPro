@@ -16,6 +16,16 @@ async function getMovies(id) {
    }
 };
 
+async function postMovie(mv) {
+   const url = new URL(urlAPI);
+
+   try {
+      await axios.post(url, mv);
+   } catch (error) {
+      console.error(error);
+   }
+};
+
 async function putMovie(id, mv) {
    const url = new URL(`${id}`, urlAPI);
 
@@ -36,4 +46,4 @@ async function deleteMovie(id) {
    }
 };
 
-export { getMovies, putMovie, deleteMovie };
+export { getMovies, postMovie, putMovie, deleteMovie };
