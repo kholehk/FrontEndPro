@@ -19,7 +19,7 @@ export default class Movie {
       this._element = renderTemplate(template, { ...movie });
 
       this._element.querySelectorAll("button").forEach((btn, idx) => {
-         cbOnClick[idx] = btn.dataset.click ? btn.dataset.click : cbOnClick[idx];
+         cbOnClick[idx] = btn.dataset.click || cbOnClick[idx];
 
          btn.addEventListener("click", event => { 
             const cb = Movie[cbOnClick[idx]];
@@ -85,14 +85,16 @@ export default class Movie {
                   if (elem.name === "" || elem.value === "") return result;
 
                   if (elem.name === "others") {
-                     result[elem.name][elem.value] = "";
+                     result[elem.name][elem.value] = result[elem.name][elem.value] || [];
                      arr[idx+1].name = elem.value;
 
                      return result;
                   };
 
                   const obj = (elem.name in result.others)? result.others : result;
-                  obj[elem.name] = (elem.name === "cast")? elem.value.split(", ") : elem.value;
+                  obj[elem.name] = obj[elem.name] || [];
+                  obj[elem.name] = Array.isArray(obj[elem.name])? obj[elem.name] : [obj[elem.name]];
+                  obj[elem.name] = (elem.name === "cast")? elem.value.split(", ") : [...obj[elem.name], elem.value];
 
                   return result;
                }, { others: {}});
@@ -110,6 +112,8 @@ export default class Movie {
 
       const newPosition = detailed.lastElementChild.cloneNode(true);
 
+      newPosition.querySelectorAll("input").forEach(elem => elem.value = "");
+
       newPosition
          .querySelector("button")
          .addEventListener("click", event => Movie.delPosition.bind(this)(event));
@@ -118,9 +122,12 @@ export default class Movie {
    };
 
    static delPosition(event) {
-      event.path
-      .find(elem => elem.dataset.id === "others")
-      .remove();
+      const position = event.path
+         .find(elem => elem.dataset && elem.dataset.id === "others" && elem.nextElementSibling);
+
+      if (position instanceof HTMLElement) {
+         position.remove();
+      }
    };
 
    static async remove(event) {
