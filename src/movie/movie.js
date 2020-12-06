@@ -11,7 +11,6 @@ import removeTemplate from "./movie-remove.html";
 import { renderTemplate } from "../utils/template-utils";
 import { getMovies, postMovie, putMovie, deleteMovie } from "../utils/api-utils";
 
-const elementForSave = [HTMLInputElement, HTMLTextAreaElement];
 export default class Movie {
    constructor(movie, objTemplate) { 
       const { template, cbOnClick } = { ...objTemplate };
@@ -22,11 +21,11 @@ export default class Movie {
       this._element.querySelectorAll("button").forEach((btn, idx) => {
          cbOnClick[idx] = btn.dataset.click || cbOnClick[idx];
 
-         btn.addEventListener("click", event => { 
-            const cb = Movie[cbOnClick[idx]];
+         btn.addEventListener("click", async event => { 
+            const cb = this[cbOnClick[idx]];
 
             if (typeof cb !== "function") return;
-            cb.bind(this)(event);
+            await cb.bind(this)(event);
          })
       });
    }
@@ -53,26 +52,8 @@ export default class Movie {
    get render() { 
       return this._element;
    };
-
-   async createModal(mv, templ, cbSubmit) {
-      const modalMovie = (new Movie(mv, templ)).render;
-
-      $(modalMovie).on("shown.bs.modal", () => $(".close").trigger("focus"));
-
-      $(modalMovie).on("hidden.bs.modal", event => event.currentTarget.remove());
-
-      $(modalMovie).find("[type='submit']").on("click", async event => await cbSubmit(event));
-
-      $(modalMovie).modal("show");
-
-      $("body").append(modalMovie);
-   };
-
-   static isElementForSave(elem) {
-      return elementForSave.find(html => elem instanceof html);
-   };
-
-   static async edit(event) {
+   
+   async edit(event) {
       console.log("EDIT MOVIE");
 
       const templ = {
@@ -84,65 +65,11 @@ export default class Movie {
       movies.forEach(mv => {
          const header = mv.id !== Movie.idBlank ? "Редагувати цей фільм" : "Додати новий фільм"; 
 
-         this.createModal({...mv, header}, templ, async (event) => {
-            const mvEdited = Array.from(event.currentTarget.form)
-               .filter(elem => Movie.isElementForSave(elem))
-               .reduce((result, elem, idx, arr) => {
-                  if (elem.name === "" || elem.value === "") return result;
-
-                  if (elem.name === "others") {
-                     result[elem.name][elem.value] = result[elem.name][elem.value] || [];
-                     arr[idx+1].name = elem.value;
-
-                     return result;
-                  };
-
-                  const obj = (elem.name in result.others)? result.others : result;
-                  obj[elem.name] = obj[elem.name] || [];
-                  obj[elem.name] = Array.isArray(obj[elem.name])? obj[elem.name] : [obj[elem.name]];
-                  obj[elem.name] = (elem.name === "cast")? elem.value.split(", ") : [...obj[elem.name], elem.value];
-
-                  return result;
-               }, { others: {}});
-
-            const resultMovie = {...mv, ...mvEdited};
-
-            if (!resultMovie.title.length) return;
-
-            if (this.id !== Movie.idBlank) {
-               await putMovie(this.id, resultMovie);
-               this.render.replaceWith((new Movie(resultMovie, Movie.card)).render);
-            } else {
-               await postMovie(resultMovie);
-            };
-         });
+         new Modal({ ...mv, header }, templ, this.render);
       });
    };
 
-   static addPosition(event) {
-      const detailed = this.render.querySelector("[data-id='detailed']");
-
-      const newPosition = detailed.lastElementChild.cloneNode(true);
-
-      newPosition.querySelectorAll("input").forEach(elem => elem.value = "");
-
-      newPosition
-         .querySelector("button")
-         .addEventListener("click", event => Movie.delPosition.bind(this)(event));
-
-      detailed.appendChild(newPosition);
-   };
-
-   static delPosition(event) {
-      const position = event.path
-         .find(elem => elem.dataset && elem.dataset.id === "others" && elem.nextElementSibling);
-
-      if (position instanceof HTMLElement) {
-         position.remove();
-      }
-   };
-
-   static async remove(event) {
+   async remove(event) {
       console.log("DELETE MOVIE");
 
       const mv = { ...this };
@@ -151,17 +78,14 @@ export default class Movie {
          cbOnClick: []
       };
 
-      this.createModal(mv, templ, async () => {
-         await deleteMovie(this.id);
-         this.render.remove();
-      });
+      new Modal(mv, templ, this.render);
    };
 
-   static async like(event) { 
+   async like(event) { 
       await this.rating(event.currentTarget, "like");
    };
 
-   static async dislike(event) { 
+   async dislike(event) { 
       await this.rating(event.currentTarget, "dislike");
    };
 
@@ -188,4 +112,90 @@ export default class Movie {
       votedMovies.push(this.id);
       localStorage.setItem("voted", JSON.stringify(votedMovies));
    }
+};
+
+class Modal extends Movie {
+   constructor(movie, objTemplate, parentElement) { 
+      super(movie, objTemplate);
+
+      const { header, ..._movie } = { ...movie };
+      this._movie = _movie;
+      this._parent = parentElement;
+
+      $("body").append(this.render);
+
+      $(this.render).on("shown.bs.modal", () => $(".close").trigger("focus"));
+
+      $(this.render).on("hidden.bs.modal", event => event.currentTarget.remove());
+
+      $(this.render).modal("show");
+   };
+
+   addPosition(event) {
+      const detailed = this.render.querySelector("[data-id='detailed']");
+
+      const newPosition = detailed.lastElementChild.cloneNode(true);
+
+      newPosition.querySelectorAll("input").forEach(elem => elem.value = "");
+
+      newPosition
+         .querySelector("button")
+         .addEventListener("click", event => this.delPosition(event));
+
+      detailed.appendChild(newPosition);
+   };
+
+   delPosition(event) {
+      const position = event.path
+         .find(elem => elem.dataset && elem.dataset.id === "others" && elem.nextElementSibling);
+
+      if (position instanceof HTMLElement) {
+         position.remove();
+      }
+   };
+
+   static isElementForSave(elem) {
+      const elementForSave = [HTMLInputElement, HTMLTextAreaElement];
+
+      return elementForSave.find(html => elem instanceof html);
+   };
+
+   async editSubmit(event) {
+      const mvEdited = Array.from(event.currentTarget.form)
+         .filter(elem => Modal.isElementForSave(elem))
+         .reduce((result, elem, idx, arr) => {
+            if (elem.name === "" || elem.value === "") return result;
+
+            if (elem.name === "others") {
+               result[elem.name][elem.value] = result[elem.name][elem.value] || [];
+               arr[idx + 1].name = elem.value;
+
+               return result;
+            };
+
+            const obj = (elem.name in result.others) ? result.others : result;
+            obj[elem.name] = obj[elem.name] || [];
+            obj[elem.name] = Array.isArray(obj[elem.name]) ? obj[elem.name] : [obj[elem.name]];
+            obj[elem.name] = (elem.name === "cast") ? elem.value.split(", ") : [...obj[elem.name], elem.value];
+
+            return result;
+         }, { others: {} });
+
+      const resultMovie = { ...this._movie, ...mvEdited };
+
+      if (!resultMovie.title.length) return;
+
+      if (this.id === Movie.idBlank) {
+         await postMovie(resultMovie);
+         return;
+      };
+
+      await putMovie(this.id, resultMovie);
+      this._parent.replaceWith((new Movie(resultMovie, Movie.card)).render);
+   };
+
+   async removeSubmit(event) {
+      await deleteMovie(this.id);
+      this._parent.remove();
+   };
 }

@@ -71,7 +71,7 @@ function main() {
          const schemaMovie = { id: Movie.idBlank, title: [],  poster: [], description: [], IMDb: []};
          const newMovie = new Movie(schemaMovie, Movie.card);
    
-         await Movie.edit.bind(newMovie)();
+         await newMovie.edit();
 
          $(".modal").on("hidden.bs.modal", event => history.push(links.movies));
       };
