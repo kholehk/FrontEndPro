@@ -57,8 +57,6 @@ export default class Movie {
    async createModal(mv, templ, cbSubmit) {
       const modalMovie = (new Movie(mv, templ)).render;
 
-      this.render.appendChild(modalMovie);
-
       $(modalMovie).on("shown.bs.modal", () => $(".close").trigger("focus"));
 
       $(modalMovie).on("hidden.bs.modal", event => event.currentTarget.remove());
@@ -66,11 +64,13 @@ export default class Movie {
       $(modalMovie).find("[type='submit']").on("click", async event => await cbSubmit(event));
 
       $(modalMovie).modal("show");
-   }
+
+      $("body").append(modalMovie);
+   };
 
    static isElementForSave(elem) {
       return elementForSave.find(html => elem instanceof html);
-   }
+   };
 
    static async edit(event) {
       console.log("EDIT MOVIE");
@@ -83,8 +83,8 @@ export default class Movie {
       const movies = await getMovies(this.id);
       movies.forEach(mv => {
          const header = mv.id !== Movie.idBlank ? "Редагувати цей фільм" : "Додати новий фільм"; 
-         this.createModal({...mv, header}, templ, async (event) => {
 
+         this.createModal({...mv, header}, templ, async (event) => {
             const mvEdited = Array.from(event.currentTarget.form)
                .filter(elem => Movie.isElementForSave(elem))
                .reduce((result, elem, idx, arr) => {
@@ -106,6 +106,8 @@ export default class Movie {
                }, { others: {}});
 
             const resultMovie = {...mv, ...mvEdited};
+
+            if (!resultMovie.title.length) return;
 
             if (this.id !== Movie.idBlank) {
                await putMovie(this.id, resultMovie);
@@ -151,7 +153,7 @@ export default class Movie {
 
       this.createModal(mv, templ, async () => {
          await deleteMovie(this.id);
-         this.render.style.display = "none";
+         this.render.remove();
       });
    };
 

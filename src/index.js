@@ -63,7 +63,7 @@ function main() {
       renderRoute(listener.location.pathname, wrapper);
    });
    
-   document.addEventListener("click", event => {
+   document.addEventListener("click", async event => {
       event.preventDefault();
 
       const elementId = event.target.attributes.id;
@@ -71,16 +71,9 @@ function main() {
          const schemaMovie = { id: Movie.idBlank, title: [],  poster: [], description: [], IMDb: []};
          const newMovie = new Movie(schemaMovie, Movie.card);
    
-         Array.from(newMovie.render.children).forEach(elem => elem.style.display = "none");
+         await Movie.edit.bind(newMovie)();
 
-         document.querySelector("body").appendChild(newMovie.render);
-
-         Movie.edit.bind(newMovie)();
-
-         $(newMovie.render).on("hidden.bs.modal", event => {
-            newMovie.render.remove(); 
-            history.push(links.movies);
-         });
+         $(".modal").on("hidden.bs.modal", event => history.push(links.movies));
       };
 
       if (!event.target.href) return;
