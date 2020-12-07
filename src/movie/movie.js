@@ -10,12 +10,15 @@ import removeTemplate from "./movie-remove.html";
 
 import { renderTemplate } from "../utils/template-utils";
 import { getMovies, postMovie, putMovie, deleteMovie } from "../utils/api-utils";
+import { id } from "date-fns/locale";
 
 export default class Movie {
    constructor(movie, objTemplate) { 
-      const { template, cbOnClick } = { ...objTemplate };
+
       this.id = movie.id;
-      this.title = movie.title;
+
+      const { template, cbOnClick } = { ...objTemplate };
+
       this._element = renderTemplate(template, { ...movie });
 
       this._element.querySelectorAll("button").forEach((btn, idx) => {
@@ -28,11 +31,18 @@ export default class Movie {
             await cb.bind(this)(event);
          })
       });
-   }
+   };
 
-   static get idBlank() {
+   static get blankID() {
 
       return "195260df-34ae-4682-9a8e-14030cf3f929";
+   };
+
+   static get blank() {
+      return {
+         template: "<div></div>",
+         cbOnClick: []
+      };
    };
 
    static get card() {
@@ -56,29 +66,19 @@ export default class Movie {
    async edit(event) {
       console.log("EDIT MOVIE");
 
-      const templ = {
-         template: editTemplate,
-         cbOnClick: ["", "addPosition"]
-      };
-
       const movies = await getMovies(this.id);
       movies.forEach(mv => {
-         const header = mv.id !== Movie.idBlank ? "Редагувати цей фільм" : "Додати новий фільм"; 
+         const header = mv.id !== Movie.blankID ? "Редагувати цей фільм" : "Додати новий фільм"; 
 
-         new Modal({ ...mv, header }, templ, this.render);
+         new Modal({ ...mv, header }, Modal.edit, this.render);
       });
    };
 
    async remove(event) {
       console.log("DELETE MOVIE");
-
-      const mv = { ...this };
-      const templ = {
-         template: removeTemplate,
-         cbOnClick: []
-      };
-
-      new Modal(mv, templ, this.render);
+      
+      const movies = await getMovies(this.id);
+      movies.forEach(mv => new Modal(mv, Modal.remove, this.render));
    };
 
    async like(event) { 
@@ -129,6 +129,20 @@ class Modal extends Movie {
       $(this.render).on("hidden.bs.modal", event => event.currentTarget.remove());
 
       $(this.render).modal("show");
+   };
+
+   static get edit() {
+      return {
+         template: editTemplate,
+         cbOnClick: ["", "addPosition"]
+      };
+   };
+
+   static get remove() {
+      return {
+         template: removeTemplate,
+         cbOnClick: []
+      };
    };
 
    addPosition(event) {
@@ -185,7 +199,7 @@ class Modal extends Movie {
 
       if (!resultMovie.title.length) return;
 
-      if (this.id === Movie.idBlank) {
+      if (this.id === Movie.blankID) {
          await postMovie(resultMovie);
          return;
       };

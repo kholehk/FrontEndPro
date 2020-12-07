@@ -34,7 +34,7 @@ function main() {
             const movies = await getMovies(id);
 
             render = movies
-               .filter(mv => mv.id !== Movie.idBlank)
+               .filter(mv => mv.id !== Movie.blankID)
                .map(mv => (new Movie(mv, templ)).render);
             
             break;
@@ -68,8 +68,7 @@ function main() {
 
       const elementId = event.target.attributes.id;
       if (elementId && elementId.value === "add-new") {
-         const schemaMovie = { id: Movie.idBlank, title: [],  poster: [], description: [], IMDb: []};
-         const newMovie = new Movie(schemaMovie, Movie.card);
+         const newMovie = new Movie({id: Movie.blankID}, Movie.blank);
    
          await newMovie.edit();
 
