@@ -24,4 +24,4 @@ async function renderRoute(path, wrapper) {
    }
 }
 
-export default renderRoute;
+// export default renderRoute;

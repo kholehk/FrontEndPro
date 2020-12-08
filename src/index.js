@@ -4,6 +4,7 @@ import './style.css';
 
 import $ from "jquery";
 import "bootstrap";
+import queryString from "query-string";
 
 import Root from './root/root';
 import Movie from './movie/movie';
@@ -15,7 +16,8 @@ function main() {
    
    const links = Object.freeze({
       "root": "/",
-      "movies": "/movies"
+      "movies": "/movies",
+      "search": "/search"
    });
 
    async function renderRoute(path, wrapper) {
@@ -37,6 +39,10 @@ function main() {
                .filter(mv => mv.id !== Movie.blankID)
                .map(mv => (new Movie(mv, templ)).render);
             
+            break;
+         case links.search:
+            render = [];
+
             break;
          default:
             const err = document.createElement("h1");
@@ -66,19 +72,31 @@ function main() {
    document.addEventListener("click", async event => {
       event.preventDefault();
 
-      const elementId = event.target.attributes.id;
-      if (elementId && elementId.value === "add-new") {
-         const newMovie = new Movie({id: Movie.blankID}, Movie.blank);
-   
-         await newMovie.edit();
-
-         $(".modal").on("hidden.bs.modal", event => history.push(links.movies));
-      };
-
       if (!event.target.href) return;
       history.push(event.target.href);
 
    });
+
+   const buttonAddNew = document.querySelector("#add-new");
+   if (buttonAddNew) {
+      buttonAddNew.addEventListener("click", async event => { 
+         const newMovie = new Movie({ id: Movie.blankID }, Movie.blank);
+         await newMovie.edit();
+
+         $(".modal").on("hidden.bs.modal", event => history.push(links.movies));
+      });
+   };
+   
+   const buttonSearch = document.querySelector(".search");
+   if (buttonSearch) { 
+      buttonSearch.addEventListener("click", async event => { 
+         const search = { title: event.currentTarget.previousElementSibling.value };
+
+         location.hash = "search";
+         location.search = queryString.stringify(search);
+         console.log(location.href);
+      });
+   };
 
    wrapper.innerHTML = "";
    wrapper.appendChild((new Root).render);

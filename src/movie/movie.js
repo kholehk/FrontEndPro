@@ -10,7 +10,6 @@ import removeTemplate from "./movie-remove.html";
 
 import { renderTemplate } from "../utils/template-utils";
 import { getMovies, postMovie, putMovie, deleteMovie } from "../utils/api-utils";
-import { id } from "date-fns/locale";
 
 export default class Movie {
    constructor(movie, objTemplate) { 
