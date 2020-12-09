@@ -31,7 +31,8 @@ function main() {
 
             break;
          case links.movies:
-            const id = history.location.hash.slice(1);
+            const hash = history.location.hash.slice(1);
+            const id = hash !== "search" ? hash : "";
             const templ = id ? Movie.more : Movie.card;
             const movies = await getMovies(id);
 
@@ -63,18 +64,15 @@ function main() {
    });
 
    const history = getHistory();
-   history.listen(listener => {
-
-      $(document).find(".modal").modal("hide");
-      renderRoute(listener.location.pathname, wrapper);
-   });
+   history.listen(listener => renderRoute(listener.location.pathname, wrapper));
    
    document.addEventListener("click", async event => {
       event.preventDefault();
 
-      if (!event.target.href) return;
-      history.push(event.target.href);
+      const href = event.target.href;
+      if (!href) return;
 
+      history.push(href);
    });
 
    const buttonAddNew = document.querySelector("#add-new");
@@ -91,10 +89,13 @@ function main() {
    if (buttonSearch) { 
       buttonSearch.addEventListener("click", async event => { 
          const search = { title: event.currentTarget.previousElementSibling.value };
+         const url = new URL(location);
 
-         location.hash = "search";
-         location.search = queryString.stringify(search);
-         console.log(location.href);
+         url.hash = "search";
+         url.search = queryString.stringify(search);
+         url.pathname = links.movies;
+
+         history.push(history.createHref(url));
       });
    };
 
