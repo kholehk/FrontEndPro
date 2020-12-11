@@ -20,7 +20,8 @@ function main() {
       "search": "/search"
    });
 
-   async function renderRoute(path, wrapper) {
+   async function renderRoute(location, wrapper) {
+      const path = location.pathname;
       let render = [];
       wrapper.innerHTML = "";
 
@@ -31,13 +32,20 @@ function main() {
 
             break;
          case links.movies:
-            const hash = history.location.hash.slice(1);
+            const hash = location.hash.slice(1);
             const id = hash !== "search" ? hash : "";
+            const search = queryString.parse(location.search);
+            const { title } = { ...search };
             const templ = id ? Movie.more : Movie.card;
             const movies = await getMovies(id);
 
             render = movies
                .filter(mv => mv.id !== Movie.blankID)
+               .filter(mv => {
+                  if (hash !== "search") return true;
+                  if (title === mv.title[0]) return true;
+                  return false;
+               })
                .map(mv => (new Movie(mv, templ)).render);
             
             break;
@@ -64,7 +72,7 @@ function main() {
    });
 
    const history = getHistory();
-   history.listen(listener => renderRoute(listener.location.pathname, wrapper));
+   history.listen(listener => renderRoute(listener.location, wrapper));
    
    document.addEventListener("click", async event => {
       event.preventDefault();
@@ -89,13 +97,12 @@ function main() {
    if (buttonSearch) { 
       buttonSearch.addEventListener("click", async event => { 
          const search = { title: event.currentTarget.previousElementSibling.value };
-         const url = new URL(location);
-
+         const url = new URL(links.movies, location);
+         
          url.hash = "search";
          url.search = queryString.stringify(search);
-         url.pathname = links.movies;
 
-         history.push(history.createHref(url));
+         history.push(url.href);
       });
    };
 
