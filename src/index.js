@@ -2,8 +2,8 @@
 
 import './style.css';
 
-import $ from "jquery";
-import "bootstrap";
+// import $ from "jquery";
+// import "bootstrap";
 import queryString from "query-string";
 
 import Root from './root/root';
@@ -16,12 +16,11 @@ function main() {
    
    const links = Object.freeze({
       "root": "/",
-      "movies": "/movies",
-      "search": "/search"
+      "movies": "/movies"
    });
 
-   async function renderRoute(location, wrapper) {
-      const path = location.pathname;
+   async function renderRoute(locationRoute, wrapper) {
+      const path = locationRoute.pathname;
       let render = [];
       wrapper.innerHTML = "";
 
@@ -32,19 +31,24 @@ function main() {
 
             break;
          case links.movies:
-            const hash = location.hash.slice(1);
+            const hash = locationRoute.hash.slice(1);
+
             const id = hash !== "search" ? hash : "";
-            const search = queryString.parse(location.search);
-            const { title } = { ...search };
             const templ = id ? Movie.more : Movie.card;
+
+            const search = queryString.parse(locationRoute.search);
+            const title = new RegExp(search.title, "i");
+
+            const input = document.querySelector("#search input");
+            input.value = hash === "search" ? input.value : "";
+
             const movies = await getMovies(id);
 
             render = movies
-               .filter(mv => mv.id !== Movie.blankID)
                .filter(mv => {
+                  if (mv.id === Movie.blankID) return false;
                   if (hash !== "search") return true;
-                  if (title === mv.title[0]) return true;
-                  return false;
+                  return title.test(mv.title.join(""));
                })
                .map(mv => (new Movie(mv, templ)).render);
             
@@ -66,9 +70,13 @@ function main() {
    if (wrapper === null) return null;
 
    window.addEventListener("load", event => {
-      const route = new URL(event.target.URL);
+      const url = new URL(event.target.URL);
 
-      renderRoute(route.pathname, wrapper);
+      const search = queryString.parse(url.search);
+      const input = document.querySelector("#search input");
+      input.value = url.hash === "#search" ? search.title : "";
+
+      renderRoute(url, wrapper);
    });
 
    const history = getHistory();
@@ -80,7 +88,7 @@ function main() {
       const href = event.target.href;
       if (!href) return;
 
-      history.push(href);
+      history.push({ pathname: href, search: "", hash: "" });
    });
 
    const buttonAddNew = document.querySelector("#add-new");
@@ -89,7 +97,11 @@ function main() {
          const newMovie = new Movie({ id: Movie.blankID }, Movie.blank);
          await newMovie.edit();
 
-         $(".modal").on("hidden.bs.modal", event => history.push(links.movies));
+         const submitButton = document.querySelector(".modal [type='submit']");
+         if (!submitButton) return;
+         submitButton.addEventListener("click", event => history.push({
+            pathname: links.movies, search: "", hash: ""
+         }));
       });
    };
    
@@ -97,12 +109,8 @@ function main() {
    if (buttonSearch) { 
       buttonSearch.addEventListener("click", async event => { 
          const search = { title: event.currentTarget.previousElementSibling.value };
-         const url = new URL(links.movies, location);
-         
-         url.hash = "search";
-         url.search = queryString.stringify(search);
 
-         history.push(url.href);
+         history.push({ pathname: links.movies, search: "?"+queryString.stringify(search), hash: "#search" });
       });
    };
 
