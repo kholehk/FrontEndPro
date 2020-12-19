@@ -70,6 +70,8 @@ function main() {
    if (wrapper === null) return null;
 
    window.addEventListener("load", event => {
+      event.preventDefault();
+      
       const url = new URL(event.target.URL);
 
       const search = queryString.parse(url.search);
