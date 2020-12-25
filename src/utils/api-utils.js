@@ -2,7 +2,7 @@
 
 import axios from 'axios';
 
-const urlAPI = new URL("/movies", "http://localhost:3000");
+const urlAPI = new URL("/movies", "https://kinoteka.herokuapp.com");
 
 async function getMovies(id) {
    const url = new URL(`${id}`, urlAPI);
