@@ -59,11 +59,9 @@ function main() {
             break;
          default:
 
-            render = [(new Root).render];
-
-            // const err = document.createElement("h1");
-            // err.innerText = "404";
-            // render = [err];
+            const err = document.createElement("h1");
+            err.innerText = "404";
+            render = [err];
       };
 
       render.forEach( element => wrapper.appendChild(element) );
